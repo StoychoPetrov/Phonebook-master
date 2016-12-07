@@ -1,12 +1,5 @@
 package com.example.stoycho.phonebook.models;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.example.stoycho.phonebook.database.Database;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,13 +7,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Stoycho on 10/20/2016.
- */
-
 public class Country {
 
-    private Context mContext;
     private int mId;
     private String mCountryName;
     private String mCallingCode;
@@ -28,8 +16,7 @@ public class Country {
     public Country() {
     }
 
-    public Country(Context context,String countryName, String mCallingCode) {
-        this.mContext       = context;
+    public Country(String countryName, String mCallingCode) {
         this.mCountryName   = countryName;
         this.mCallingCode   = mCallingCode;
     }
