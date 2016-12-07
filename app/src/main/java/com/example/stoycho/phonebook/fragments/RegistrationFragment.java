@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.stoycho.phonebook.R;
 import com.example.stoycho.phonebook.activities.HomeActivity;
+import com.example.stoycho.phonebook.database.UsersAndCountruesDatabaseComunication;
 import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.models.Country;
 import com.example.stoycho.phonebook.database.Database;
@@ -92,7 +93,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         String code = getString(R.string.plus) + getArguments().getString("callingCode") + " ";
         mCountryEdbId = getArguments().getInt("countryId");
         mCallingCodeTxt.setText(code);
-        if(bundle.getString("gender").equals("Male"))
+        String gender = bundle.getString("gender");
+        if(gender != null &&gender.equals("Male"))
             mMale.setChecked(true);
         else
             mFemale.setChecked(true);
@@ -148,7 +150,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
                 ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));
-        Country country = new Country(getActivity(),mCountryEdb.getText().toString(),mPhoneCode);
+        Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
         int userId = getArguments().getInt("id");
         user.setId(userId);
         if(usersDatabaseCommunication.updateUserInDatabase(user)) {
@@ -166,7 +168,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         if(!mFirstNameEdb.getText().toString().equals("") && !mLastNameEdb.getText().toString().equals("") && !mCountryEdb.getText().toString().equals("")
                 && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMale.isChecked() || mFemale.isChecked()))
         {
-            List<User> users = new Database(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString());
+            List<User> users = new UsersAndCountruesDatabaseComunication(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString());
             if(users.size() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage(R.string.message_for_dialog)
@@ -194,7 +196,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
                 ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));
-        Country country = new Country(getActivity(),mCountryEdb.getText().toString(),mPhoneCode);
+        Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
         long id = usersDatabaseCommunication.saveInDatabase(user);
         if(id != -1) {
             user.setId((int) id);
