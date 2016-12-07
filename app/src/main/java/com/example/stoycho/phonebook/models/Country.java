@@ -45,7 +45,7 @@ public class Country {
         this.mCallingCode = mCallingCode;
     }
 
-    public void parcefromJson(JSONObject country) throws JSONException {
+    private void parcefromJson(JSONObject country) throws JSONException {
         JSONArray countryCodes = country.getJSONArray("mCallingCodes");
         this.mCountryName = country.getString("name");
         this.mCallingCode = countryCodes.length() > 0 ? countryCodes.getString(0) : null;
