@@ -50,6 +50,8 @@ public class Database extends SQLiteOpenHelper {
     private final static String CREATE_COUNTRIES = " CREATE TABLE " + COUNTRIES_TABLE_NAME + " ( " + COLUMN_COUNTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_COUNTRY_NAME + " TEXT, "
             + COLUMN_CALLING_CODE + " TEXT)";
 
+    private static Database database = null;
+
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -71,5 +73,12 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + COUNTRIES_TABLE_NAME);
             onCreate(db);
         }
+    }
+
+    public static Database getInstance(Context context)
+    {
+        if(database == null)
+            database = new Database(context);
+        return database;
     }
 }

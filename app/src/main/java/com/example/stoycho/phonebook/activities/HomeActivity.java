@@ -85,7 +85,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void loadCountries()
     {
         String urlForGetCountries = getString(R.string.countries_api);                                              // api for countries names
-        final CountriesDatabaseCommunication countryDatabaseCommunication = new CountriesDatabaseCommunication(this);
+        final CountriesDatabaseCommunication countryDatabaseCommunication = CountriesDatabaseCommunication.getInstance(this);
         DownloadData data = new DownloadData(urlForGetCountries)                                                        // make request to api for countries names
         {
             @Override
@@ -105,7 +105,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void loadUsers()
     {
         mCountries      = new ArrayList<>();
-        mUsers          = new UsersAndCountruesDatabaseComunication(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null);  // make query for all users with their countries from Users table and Countries table
+        mUsers          = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null);  // make query for all users with their countries from Users table and Countries table
         mUserAdapter    = new UsersAdapter(this,mUsers,mCountries);
         mListWithUsers.setAdapter(mUserAdapter);
 
@@ -177,7 +177,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         else
             mFilterCountryTxt.setText(countryName.getCountryName());
         String gender = mFilterGenderTxt.getText().toString();
-        mUsers = new UsersAndCountruesDatabaseComunication(this).selectUsersAndTheirCountries(mCountries,countryName != null ? countryName.getId():-1, !gender.equals("All") ? gender : null,null);
+        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryName != null ? countryName.getId():-1, !gender.equals("All") ? gender : null,null);
         mUserAdapter.setUsersAndCountries(mUsers, mCountries);
         mUserAdapter.notifyDataSetChanged();
     }
@@ -199,7 +199,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 countryId = mSelectedFilterCountry.getId();
             else
                 countryId = -1;
-            mUsers = new UsersAndCountruesDatabaseComunication(this).selectUsersAndTheirCountries(mCountries,countryId,!gender.equals("All") ? gender : null,null);
+            mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,!gender.equals("All") ? gender : null,null);
             mUserAdapter.setUsersAndCountries(mUsers,mCountries);
             mUserAdapter.notifyDataSetChanged();
         }
@@ -234,7 +234,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void deleteUser(int position)                                                       //Delete user from database and listview
     {
-        UsersDatabaseCommunication usersDatabaseCommunication = new UsersDatabaseCommunication(this);
+        UsersDatabaseCommunication usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(this);
 
         if(usersDatabaseCommunication.deleteUserFromDatabase(mUsers.get(position))) {           //delete user from database, method return true if the query is successful
             mUsers.remove(position);

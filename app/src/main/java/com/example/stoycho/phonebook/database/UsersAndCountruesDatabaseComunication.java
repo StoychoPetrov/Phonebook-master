@@ -36,6 +36,7 @@ public class UsersAndCountruesDatabaseComunication extends Database {
     private final static String COLUMN_CALLING_CODE     = "calling_code";
 
     public final static int WITHOUT_COUNTRY_ID = -1;
+    private static UsersAndCountruesDatabaseComunication instance = null;
 
     public UsersAndCountruesDatabaseComunication(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
@@ -86,4 +87,12 @@ public class UsersAndCountruesDatabaseComunication extends Database {
         database.close();
         return users;
     }
+
+    public static UsersAndCountruesDatabaseComunication getInstance(Context context)
+    {
+        if(instance == null)
+            instance = new UsersAndCountruesDatabaseComunication(context);
+        return instance;
+    }
+
 }

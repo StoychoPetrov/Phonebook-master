@@ -59,7 +59,7 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
         mCountriesList                  = (ListView)root.findViewById(R.id.countriesList);
         mSearchTxt                      = (TextView) root.findViewById(R.id.all);
         mDivider                        = root.findViewById(R.id.divider);
-        mCountriesDatabaseCommunication = new CountriesDatabaseCommunication(getActivity());
+        mCountriesDatabaseCommunication = CountriesDatabaseCommunication.getInstance(getActivity());
     }
 
     private void setListeners()

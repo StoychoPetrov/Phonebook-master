@@ -17,6 +17,7 @@ import java.util.List;
 
 public class CountriesDatabaseCommunication extends Database {
 
+
     private Context mContext;
     /**************** Countries columns *************************/
     private final static String COLUMN_COUNTRY_ID       = "country_id";
@@ -26,6 +27,8 @@ public class CountriesDatabaseCommunication extends Database {
 
     public final static int SELECT_ALL_COUNTRIES        = 0;
     public final static int SELECT_SEARCH_PLACES        = 1;
+    private static CountriesDatabaseCommunication instance = null;
+
 
     public CountriesDatabaseCommunication(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
@@ -35,6 +38,13 @@ public class CountriesDatabaseCommunication extends Database {
     public CountriesDatabaseCommunication(Context context) {
         super(context);
         mContext = context;
+    }
+
+    public static CountriesDatabaseCommunication getInstance(Context context)
+    {
+        if(instance == null)
+            instance = new CountriesDatabaseCommunication(context);
+        return instance;
     }
 
     public long saveInDatabase(Country country)

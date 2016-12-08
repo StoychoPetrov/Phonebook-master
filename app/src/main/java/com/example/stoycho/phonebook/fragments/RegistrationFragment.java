@@ -168,7 +168,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         if(!mFirstNameEdb.getText().toString().equals("") && !mLastNameEdb.getText().toString().equals("") && !mCountryEdb.getText().toString().equals("")
                 && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMale.isChecked() || mFemale.isChecked()))
         {
-            List<User> users = new UsersAndCountruesDatabaseComunication(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString());
+            List<User> users = UsersAndCountruesDatabaseComunication.getInstance(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString());
             if(users.size() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage(R.string.message_for_dialog)
@@ -192,7 +192,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void registerUser()
     {
-        UsersDatabaseCommunication usersDatabaseCommunication = new UsersDatabaseCommunication(getActivity());
+        UsersDatabaseCommunication usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(getActivity());
 
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
                 ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));

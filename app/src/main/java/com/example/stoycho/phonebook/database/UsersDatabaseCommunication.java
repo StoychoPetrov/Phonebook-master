@@ -23,6 +23,7 @@ public class UsersDatabaseCommunication extends Database {
     private final static String COLUMN_COUNTRY_ID_FK    = "coutry_id_fk";
 
     private final static String USERS_TABLE_NAME        = "users";
+    private static UsersDatabaseCommunication instance = null;
 
     public UsersDatabaseCommunication(Context context) {
         super(context);
@@ -30,6 +31,13 @@ public class UsersDatabaseCommunication extends Database {
 
     public UsersDatabaseCommunication(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
+    }
+
+    public static UsersDatabaseCommunication getInstance(Context context)
+    {
+        if(instance == null)
+            instance = new UsersDatabaseCommunication(context);
+        return instance;
     }
 
     public long saveInDatabase(User user) {
