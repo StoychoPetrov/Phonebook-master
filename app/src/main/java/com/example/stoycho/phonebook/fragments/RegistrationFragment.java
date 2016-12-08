@@ -43,6 +43,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private boolean     mHasEmailError;
     private boolean     mHasPhoneError;
 
+    private final static String BUNDLE_USER_KEY             = "user";
+    private final static String BUNDLE_COUNTRY_KEY          = "country";
+    public  final static String REGISTRATION_FRAGMENT_TAG   = "registerFragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +58,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         View root = inflater.inflate(R.layout.fragment_registration, container, false);
         initUI(root);
         setListeners();
-        if(getArguments() != null && getArguments().containsKey("id"))
+        if(getArguments() != null && getArguments().containsKey(BUNDLE_USER_KEY))
             setInformations();
         // Inflate the layout for this fragment
         return root;
@@ -83,21 +87,26 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void setInformations()
     {
-        Bundle bundle = getArguments();
-        mFirstNameEdb   .setText(bundle.getString("firstName"));
-        mLastNameEdb    .setText(bundle.getString("lastName"));
-        mEmailEdb       .setText(bundle.getString("email"));
-        mCountryEdb     .setText(bundle.getString("country"));
-        mPhoneNumberEdb .setText(bundle.getString("phone"));
-        mPhoneCode = getArguments().getString("callingCode");
-        String code = getString(R.string.plus) + getArguments().getString("callingCode") + " ";
-        mCountryEdbId = getArguments().getInt("countryId");
-        mCallingCodeTxt .setText(code);
-        String gender = bundle.getString("gender");
-        if(gender != null &&gender.equals("Male"))
-            mMale.setChecked(true);
-        else
-            mFemale.setChecked(true);
+        if(getArguments() != null) {
+            Country country = getArguments().getParcelable(BUNDLE_COUNTRY_KEY);
+            User user       = getArguments().getParcelable(BUNDLE_USER_KEY);
+            if(user != null && country != null) {
+                mFirstNameEdb.setText(user.getFirstName());
+                mLastNameEdb.setText(user.getLastName());
+                mEmailEdb.setText(user.getEmail());
+                mCountryEdb.setText(country.getCountryName());
+                mPhoneNumberEdb.setText(user.getPhoneNumber());
+                mPhoneCode = country.getCallingCode();
+                String code = getString(R.string.plus) + mPhoneCode + " ";
+                mCountryEdbId = country.getId();
+                mCallingCodeTxt.setText(code);
+                String gender = user.getGender();
+                if (gender != null && gender.equals(getString(R.string.male)))
+                    mMale.setChecked(true);
+                else
+                    mFemale.setChecked(true);
+            }
+        }
     }
 
     @Override
@@ -151,7 +160,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
                 ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));
         Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
-        int userId = getArguments().getInt("id");
+        int userId = getArguments().getParcelable(BUNDLE_USER_KEY);
         user.setId(userId);
         if(usersDatabaseCommunication.updateUserInDatabase(user)) {
             Toast.makeText(getActivity(), R.string.successUpdate, Toast.LENGTH_SHORT).show();
@@ -217,7 +226,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             imm.hideSoftInputFromWindow(viewFocus.getWindowToken(), 0);
         }
         getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
-                .add(R.id.replace_layout,new CountriesFragment(),"countryFragment").addToBackStack(null).commit();
+                .add(R.id.replace_layout,new CountriesFragment(),CountriesFragment.COIUNTRIES_FRAGMENT_TAG).addToBackStack(null).commit();
     }
 
     private boolean emailValidation(String email) {

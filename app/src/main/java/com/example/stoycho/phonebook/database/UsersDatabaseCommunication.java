@@ -23,7 +23,7 @@ public class UsersDatabaseCommunication extends Database {
     private final static String COLUMN_COUNTRY_ID_FK    = "coutry_id_fk";
 
     private final static String USERS_TABLE_NAME        = "users";
-    private static UsersDatabaseCommunication instance = null;
+    private static UsersDatabaseCommunication instance  = null;
 
     public UsersDatabaseCommunication(Context context) {
         super(context);

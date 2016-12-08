@@ -1,7 +1,6 @@
 package com.example.stoycho.phonebook.activities;
 
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -21,15 +20,10 @@ import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.fragments.CountriesFragment;
 import com.example.stoycho.phonebook.fragments.RegistrationFragment;
 import com.example.stoycho.phonebook.models.Country;
-import com.example.stoycho.phonebook.database.Database;
 import com.example.stoycho.phonebook.models.GenderDialog;
 import com.example.stoycho.phonebook.models.InformationDialog;
 import com.example.stoycho.phonebook.models.User;
 import com.example.stoycho.phonebook.tasks.DownloadData;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +43,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private GenderDialog    mGenderDialog;
     private Country         mSelectedFilterCountry;
     private LinearLayout    mFilterLayout;
+    private final static String ALL_COUNTRIES_ARE_SELECTED = "all_selected";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +143,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     {
         CountriesFragment countriesFragment = new CountriesFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("hasAll",1);
+        bundle.putBoolean(ALL_COUNTRIES_ARE_SELECTED,true);
         countriesFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
                 .add(R.id.replace_layout,countriesFragment).addToBackStack(null).commit();
@@ -156,7 +151,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void onAddUser()                                                           //start RegisterFragment
     {
-        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),"registerFragment")
+        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),RegistrationFragment.REGISTRATION_FRAGMENT_TAG)
                 .addToBackStack(null).commit();
     }
 
@@ -255,18 +250,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         Bundle bundle = new Bundle();
         User user = mUsers.get(position);
         Country country = mCountries.get(position);
-        bundle.putInt("id",user.getId());
-        bundle.putString("firstName",user.getFirstName());
-        bundle.putString("lastName",user.getLastName());
-        bundle.putString("country",country.getCountryName());
-        bundle.putString("email",user.getEmail());
-        bundle.putString("phone",user.getPhoneNumber());
-        bundle.putString("gender",user.getGender());
-        bundle.putString("callingCode",country.getCallingCode());
-        bundle.putInt("countryId",country.getId());
-        bundle.putInt("position",position);
+        bundle.putParcelable("country",country);
+        bundle.putParcelable("user",user);
         registrationFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,registrationFragment,"registerFragment")
+        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,registrationFragment,RegistrationFragment.REGISTRATION_FRAGMENT_TAG)
                 .addToBackStack(null).commit();
         mTitleTxt.setText(getString(R.string.editContact));
     }

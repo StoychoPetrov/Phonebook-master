@@ -33,6 +33,8 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
     private View                            mDivider;
     private CountriesDatabaseCommunication  mCountriesDatabaseCommunication;
 
+    public final static String COIUNTRIES_FRAGMENT_TAG = "countryFragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
