@@ -62,14 +62,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void initUI()
     {
-        mNewContactTxt          = (TextView) findViewById(R.id.add_user);
-        mListWithUsers          = (ListView)findViewById(R.id.listForUsers);
-        mSelectCountryLayout    =  (RelativeLayout) findViewById(R.id.select_country);
-        mSelectGenderLayout     = (RelativeLayout) findViewById(R.id.select_gender);
-        mFilterCountryTxt       = (TextView) findViewById(R.id.filter_country);
-        mFilterGenderTxt        = (TextView) findViewById(R.id.filter_gender);
-        mFilterLayout           = (LinearLayout) findViewById(R.id.search_bar);
-        mTitleTxt               = (TextView) findViewById(R.id.title);
+        mNewContactTxt          = (TextView)        findViewById(R.id.add_user);
+        mListWithUsers          = (ListView)        findViewById(R.id.listForUsers);
+        mSelectCountryLayout    = (RelativeLayout)  findViewById(R.id.select_country);
+        mSelectGenderLayout     = (RelativeLayout)  findViewById(R.id.select_gender);
+        mFilterCountryTxt       = (TextView)        findViewById(R.id.filter_country);
+        mFilterGenderTxt        = (TextView)        findViewById(R.id.filter_gender);
+        mFilterLayout           = (LinearLayout)    findViewById(R.id.search_bar);
+        mTitleTxt               = (TextView)        findViewById(R.id.title);
         mGenderDialog           = new GenderDialog(this);
     }
 
@@ -84,9 +84,9 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void loadCountries()
     {
-        String urlForGetCountries = getString(R.string.countries_api);
+        String urlForGetCountries = getString(R.string.countries_api);                                              // api for countries names
         final CountriesDatabaseCommunication countryDatabaseCommunication = new CountriesDatabaseCommunication(this);
-        DownloadData data = new DownloadData(urlForGetCountries)
+        DownloadData data = new DownloadData(urlForGetCountries)                                                        // make request to api for countries names
         {
             @Override
             protected void onPostExecute(String countriesJson) {
@@ -104,20 +104,22 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void loadUsers()
     {
-        mCountries = new ArrayList<>();
-        mUsers = new UsersAndCountruesDatabaseComunication(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null);
-        mUserAdapter = new UsersAdapter(this,mUsers,mCountries);
+        mCountries      = new ArrayList<>();
+        mUsers          = new UsersAndCountruesDatabaseComunication(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null);  // make query for all users with their countries from Users table and Countries table
+        mUserAdapter    = new UsersAdapter(this,mUsers,mCountries);
         mListWithUsers.setAdapter(mUserAdapter);
+
         if(mUsers.size() > 0)
             mFilterLayout.setVisibility(View.VISIBLE);
     }
 
     public void refreshUsers(User user,Country country)
     {
-        mCountries.add(country);
-        mUsers.add(user);
-        mUserAdapter.setUsersAndCountries(mUsers,mCountries);
-        mUserAdapter.notifyDataSetChanged();
+        mCountries.     add(country);
+        mUsers.         add(user);
+        mUserAdapter.   setUsersAndCountries(mUsers,mCountries);
+        mUserAdapter.   notifyDataSetChanged();
+
         if(mFilterLayout.getVisibility() == View.GONE)
             mFilterLayout.setVisibility(View.VISIBLE);
     }
@@ -133,7 +135,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 mTitleTxt.setText(getString(R.string.registration));
                 break;
             case R.id.select_country:
-                selectCountry();
+                onSelectCountry();
                 mTitleTxt.setText(getString(R.string.countries));
                 break;
             case R.id.select_gender:
@@ -142,7 +144,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-    private void selectCountry()
+    private void onSelectCountry()                                                      //start CountriesFragment
     {
         CountriesFragment countriesFragment = new CountriesFragment();
         Bundle bundle = new Bundle();
@@ -152,16 +154,16 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 .add(R.id.replace_layout,countriesFragment).addToBackStack(null).commit();
     }
 
-    private void onAddUser()
+    private void onAddUser()                                                           //start RegisterFragment
     {
         getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),"registerFragment")
                 .addToBackStack(null).commit();
     }
 
-    public void updateUser(User user,Country country,int position)
+    public void updateUser(User user,Country country,int position)                     //update user in ListView
     {
-        mUsers.set(position,user);
-        mCountries.set(position,country);
+        mUsers      .set(position,user);
+        mCountries  .set(position,country);
         mUserAdapter.setUsersAndCountries(mUsers,mCountries);
         mUserAdapter.notifyDataSetChanged();
     }
@@ -211,7 +213,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             mTitleTxt.setText(getString(R.string.contacts));
     }
 
-    public void deleteUserAlert(final int position)
+    public void deleteUserAlert(final int position)         //Show confirmation dialog for delete user.
     {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.deleteEntry))
@@ -230,11 +232,11 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 .show();
     }
 
-    private void deleteUser(int position)
+    private void deleteUser(int position)                                                       //Delete user from database and listview
     {
         UsersDatabaseCommunication usersDatabaseCommunication = new UsersDatabaseCommunication(this);
 
-        if(usersDatabaseCommunication.deleteUserFromDatabase(mUsers.get(position))) {
+        if(usersDatabaseCommunication.deleteUserFromDatabase(mUsers.get(position))) {           //delete user from database, method return true if the query is successful
             mUsers.remove(position);
             mCountries.remove(position);
             mUserAdapter.setUsersAndCountries(mUsers,mCountries);
@@ -247,7 +249,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             Toast.makeText(this,getString(R.string.notSuccessDelete),Toast.LENGTH_SHORT).show();
     }
 
-    public void onEdit(int position)
+    public void onEdit(int position)                                            //start RegistrationFragment for editing user information
     {
         RegistrationFragment registrationFragment = new RegistrationFragment();
         Bundle bundle = new Bundle();

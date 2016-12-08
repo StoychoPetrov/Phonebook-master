@@ -41,12 +41,13 @@ public class GenderDialog extends Dialog implements View.OnClickListener{
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.gender_dialog);
 
-        mAllTxt     = (TextView) findViewById(R.id.all);
-        mMaleTxt    = (TextView) findViewById(R.id.male);
-        mFemaleTxt  = (TextView) findViewById(R.id.female);
-        RelativeLayout mAllLayout = (RelativeLayout) findViewById(R.id.allLayout);
-        RelativeLayout maleLayout = (RelativeLayout) findViewById(R.id.maleLayout);
-        RelativeLayout femaleLayout = (RelativeLayout) findViewById(R.id.femaleLayout);
+        mAllTxt                     = (TextView)        findViewById(R.id.all);
+        mMaleTxt                    = (TextView)        findViewById(R.id.male);
+        mFemaleTxt                  = (TextView)        findViewById(R.id.female);
+        RelativeLayout mAllLayout   = (RelativeLayout)  findViewById(R.id.allLayout);
+        RelativeLayout maleLayout   = (RelativeLayout)    findViewById(R.id.maleLayout);
+        RelativeLayout femaleLayout = (RelativeLayout)  findViewById(R.id.femaleLayout);
+
         mAllLayout.setOnClickListener(this);
         maleLayout.setOnClickListener(this);
         femaleLayout.setOnClickListener(this);

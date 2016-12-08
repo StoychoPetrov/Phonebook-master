@@ -38,19 +38,20 @@ public class InformationDialog extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.information_dialog);
-        TextView firstName = (TextView) findViewById(R.id.first_name);
-        TextView lastName = (TextView) findViewById(R.id.last_name);
-        TextView country = (TextView) findViewById(R.id.country);
-        TextView email = (TextView) findViewById(R.id.email);
-        TextView phoneNumber = (TextView) findViewById(R.id.phone_number);
-        TextView gender = (TextView) findViewById(R.id.gender);
+        TextView firstNameTxt      = (TextView) findViewById(R.id.first_name);
+        TextView lastNameTxt       = (TextView) findViewById(R.id.last_name);
+        TextView countryTxt        = (TextView) findViewById(R.id.country);
+        TextView emailTxt          = (TextView) findViewById(R.id.email);
+        TextView phoneNumberTxt    = (TextView) findViewById(R.id.phone_number);
+        TextView genderTxt         = (TextView) findViewById(R.id.gender);
 
         String phone = mContext.getString(R.string.plus) + mCountry.getCallingCode() + mUser.getPhoneNumber();
-        firstName.setText(mUser.getFirstName());
-        lastName.setText(mUser.getLastName());
-        country.setText(mCountry.getCountryName());
-        email.setText(mUser.getEmail());
-        phoneNumber.setText(phone);
-        gender.setText(mUser.getGender());
+
+        firstNameTxt.  setText(mUser.getFirstName());
+        lastNameTxt.   setText(mUser.getLastName());
+        countryTxt.    setText(mCountry.getCountryName());
+        emailTxt.      setText(mUser.getEmail());
+        phoneNumberTxt.setText(phone);
+        genderTxt.     setText(mUser.getGender());
     }
 }

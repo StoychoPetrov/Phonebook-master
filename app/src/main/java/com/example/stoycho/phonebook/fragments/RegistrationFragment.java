@@ -62,37 +62,37 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void initUI(View root)
     {
-        mFirstNameEdb       = (EditText)root.findViewById(R.id.first_name);
-        mLastNameEdb        = (EditText)root.findViewById(R.id.last_name);
-        mCountryEdb         = (EditText)root.findViewById(R.id.country);
-        mEmailEdb           = (EditText)root.findViewById(R.id.email);
-        mPhoneNumberEdb     = (EditText)root.findViewById(R.id.phone_number);
-        mCallingCodeTxt     = (TextView) root.findViewById(R.id.callingCode);
-        mMale               = (RadioButton)root.findViewById(R.id.male);
-        mFemale             = (RadioButton)root.findViewById(R.id.female);
-        mAdd                = (Button)root.findViewById(R.id.add);
+        mFirstNameEdb       = (EditText)    root.findViewById(R.id.first_name);
+        mLastNameEdb        = (EditText)    root.findViewById(R.id.last_name);
+        mCountryEdb         = (EditText)    root.findViewById(R.id.country);
+        mEmailEdb           = (EditText)    root.findViewById(R.id.email);
+        mPhoneNumberEdb     = (EditText)    root.findViewById(R.id.phone_number);
+        mCallingCodeTxt     = (TextView)    root.findViewById(R.id.callingCode);
+        mMale               = (RadioButton) root.findViewById(R.id.male);
+        mFemale             = (RadioButton) root.findViewById(R.id.female);
+        mAdd                = (Button)      root.findViewById(R.id.add);
     }
 
     private void setListeners()
     {
-        mAdd.setOnClickListener(this);
-        mCountryEdb.setOnClickListener(this);
-        mEmailEdb.setOnFocusChangeListener(this);
+        mAdd.           setOnClickListener(this);
+        mCountryEdb.    setOnClickListener(this);
+        mEmailEdb.      setOnFocusChangeListener(this);
         mPhoneNumberEdb.setOnFocusChangeListener(this);
     }
 
     private void setInformations()
     {
         Bundle bundle = getArguments();
-        mFirstNameEdb.setText(bundle.getString("firstName"));
-        mLastNameEdb.setText(bundle.getString("lastName"));
-        mEmailEdb.setText(bundle.getString("email"));
-        mCountryEdb.setText(bundle.getString("country"));
-        mPhoneNumberEdb.setText(bundle.getString("phone"));
+        mFirstNameEdb   .setText(bundle.getString("firstName"));
+        mLastNameEdb    .setText(bundle.getString("lastName"));
+        mEmailEdb       .setText(bundle.getString("email"));
+        mCountryEdb     .setText(bundle.getString("country"));
+        mPhoneNumberEdb .setText(bundle.getString("phone"));
         mPhoneCode = getArguments().getString("callingCode");
         String code = getString(R.string.plus) + getArguments().getString("callingCode") + " ";
         mCountryEdbId = getArguments().getInt("countryId");
-        mCallingCodeTxt.setText(code);
+        mCallingCodeTxt .setText(code);
         String gender = bundle.getString("gender");
         if(gender != null &&gender.equals("Male"))
             mMale.setChecked(true);

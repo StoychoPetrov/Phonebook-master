@@ -35,12 +35,12 @@ public class UsersDatabaseCommunication extends Database {
     public long saveInDatabase(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_FIRST_NAME, user.getFirstName());
-        values.put(COLUMN_LAST_NAME, user.getLastName());
-        values.put(COLUMN_EMAIL, user.getEmail());
-        values.put(COLUMN_PHONE_NUMBER, user.getPhoneNumber());
-        values.put(COLUMN_GENDER, user.getGender());
-        values.put(COLUMN_COUNTRY_ID_FK, user.getCountry());
+        values.put(COLUMN_FIRST_NAME,       user.getFirstName());
+        values.put(COLUMN_LAST_NAME,        user.getLastName());
+        values.put(COLUMN_EMAIL,            user.getEmail());
+        values.put(COLUMN_PHONE_NUMBER,     user.getPhoneNumber());
+        values.put(COLUMN_GENDER,           user.getGender());
+        values.put(COLUMN_COUNTRY_ID_FK,    user.getCountry());
         long id = db.insert(USERS_TABLE_NAME, null, values);
         db.close();
         user.setId((int) id);
@@ -52,12 +52,13 @@ public class UsersDatabaseCommunication extends Database {
         SQLiteDatabase database = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_FIRST_NAME, user.getFirstName());
-        values.put(COLUMN_LAST_NAME, user.getLastName());
-        values.put(COLUMN_EMAIL, user.getEmail());
-        values.put(COLUMN_PHONE_NUMBER, user.getPhoneNumber());
-        values.put(COLUMN_GENDER,user.getGender());
+        values.put(COLUMN_FIRST_NAME,    user.getFirstName());
+        values.put(COLUMN_LAST_NAME,     user.getLastName());
+        values.put(COLUMN_EMAIL,         user.getEmail());
+        values.put(COLUMN_PHONE_NUMBER,  user.getPhoneNumber());
+        values.put(COLUMN_GENDER,        user.getGender());
         values.put(COLUMN_COUNTRY_ID_FK, user.getCountry());
+
         int result = database.update(USERS_TABLE_NAME,values,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())});
         database.close();
 
@@ -67,7 +68,7 @@ public class UsersDatabaseCommunication extends Database {
     public boolean deleteUserFromDatabase(User user)
     {
         SQLiteDatabase database = this.getWritableDatabase();
-        boolean result = database.delete(USERS_TABLE_NAME,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())}) > 0;
+        boolean result          = database.delete(USERS_TABLE_NAME,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())}) > 0;
         database.close();
         return result;
     }

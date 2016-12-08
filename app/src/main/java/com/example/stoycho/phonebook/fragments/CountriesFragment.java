@@ -64,14 +64,14 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
 
     private void setListeners()
     {
-        mSearchEdb.addTextChangedListener(this);
-        mCountriesList.setOnItemClickListener(this);
-        mSearchTxt.setOnClickListener(this);
+        mSearchEdb.     addTextChangedListener(this);
+        mCountriesList. setOnItemClickListener(this);
+        mSearchTxt.     setOnClickListener(this);
     }
 
     private void loadCountriesList()
     {
-        mCountries =   mCountriesDatabaseCommunication.selectAllCountriesFromDatabase(getActivity(),CountriesDatabaseCommunication.SELECT_ALL_COUNTRIES,null);
+        mCountries =    mCountriesDatabaseCommunication.selectAllCountriesFromDatabase(getActivity(),CountriesDatabaseCommunication.SELECT_ALL_COUNTRIES,null);
         mAdapter =      new CountriesAdapter(getActivity(),mCountries);
         mCountriesList.setAdapter(mAdapter);
     }

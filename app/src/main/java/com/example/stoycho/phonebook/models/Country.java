@@ -9,9 +9,9 @@ import java.util.List;
 
 public class Country {
 
-    private int mId;
-    private String mCountryName;
-    private String mCallingCode;
+    private int     mId;
+    private String  mCountryName;
+    private String  mCallingCode;
 
     public Country() {
     }
@@ -46,9 +46,9 @@ public class Country {
     }
 
     private void parcefromJson(JSONObject country) throws JSONException {
-        JSONArray countryCodes = country.getJSONArray("mCallingCodes");
-        this.mCountryName = country.getString("name");
-        this.mCallingCode = countryCodes.length() > 0 ? countryCodes.getString(0) : null;
+        JSONArray countryCodes  = country.getJSONArray("mCallingCodes");
+        this.mCountryName       = country.getString("name");
+        this.mCallingCode       = countryCodes.length() > 0 ? countryCodes.getString(0) : null;
     }
 
     public static List<Country> parceCountriesFromJson(String countriesForParce) {

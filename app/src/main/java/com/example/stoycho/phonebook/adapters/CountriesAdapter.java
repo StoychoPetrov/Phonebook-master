@@ -50,7 +50,7 @@ public class CountriesAdapter extends BaseAdapter {
         if(convertView == null)
             convertView = mInflater.inflate(R.layout.country_item, parent, false);
 
-        Country country = mCountries.get(position);
+        Country country      = mCountries.get(position);
         TextView countryName = (TextView) convertView.findViewById(R.id.countryName);
         TextView callingCode = (TextView) convertView.findViewById(R.id.callingCode);
 

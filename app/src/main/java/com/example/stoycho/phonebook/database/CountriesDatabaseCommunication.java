@@ -18,6 +18,7 @@ import java.util.List;
 public class CountriesDatabaseCommunication extends Database {
 
     private Context mContext;
+    /**************** Countries columns *************************/
     private final static String COLUMN_COUNTRY_ID       = "country_id";
     private final static String COLUMN_COUNTRY_NAME     = "country_name";
     private final static String COLUMN_CALLING_CODE     = "calling_code";
@@ -38,8 +39,8 @@ public class CountriesDatabaseCommunication extends Database {
 
     public long saveInDatabase(Country country)
     {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+        SQLiteDatabase db       = this.getWritableDatabase();
+        ContentValues values    = new ContentValues();
         values.put(COLUMN_COUNTRY_NAME, country.getCountryName());
         values.put(COLUMN_CALLING_CODE, country.getCallingCode());
         long resultFromQuery = db.insert(COUNTRIES_TABLE_NAME, null, values);

@@ -50,9 +50,6 @@ public class Database extends SQLiteOpenHelper {
     private final static String CREATE_COUNTRIES = " CREATE TABLE " + COUNTRIES_TABLE_NAME + " ( " + COLUMN_COUNTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_COUNTRY_NAME + " TEXT, "
             + COLUMN_CALLING_CODE + " TEXT)";
 
-    public final static int SELECT_ALL_COUNTRIES =      0;
-    public final static int SELECT_SEARCH_PLACES =      1;
-
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

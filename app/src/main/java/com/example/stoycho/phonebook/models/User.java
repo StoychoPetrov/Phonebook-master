@@ -12,24 +12,24 @@ import com.example.stoycho.phonebook.database.Database;
 
 public class User {
 
-    private int mId;
-    private String mFirstName;
-    private String mLastName;
-    private int mCountryId;
-    private String mEmail;
-    private String mPhoneNumber;
-    private String mGender;
+    private int     mId;
+    private String  mFirstName;
+    private String  mLastName;
+    private int     mCountryId;
+    private String  mEmail;
+    private String  mPhoneNumber;
+    private String  mGender;
 
     public User() {
     }
 
     public User(String firstName, String lastName, int countryId, String email, String phoneNumber, String gender) {
-        this.mFirstName = firstName;
-        this.mLastName = lastName;
-        this.mCountryId = countryId;
-        this.mEmail = email;
-        this.mPhoneNumber = phoneNumber;
-        this.mGender = gender;
+        this.mFirstName     = firstName;
+        this.mLastName      = lastName;
+        this.mCountryId     = countryId;
+        this.mEmail         = email;
+        this.mPhoneNumber   = phoneNumber;
+        this.mGender        = gender;
     }
 
     public int getId() {

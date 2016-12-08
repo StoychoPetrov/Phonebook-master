@@ -27,17 +27,17 @@ public class DownloadData extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected String doInBackground(Void... params) {       // make request to api
         String dataGetChanges = "";
         URL urlGetData;
         try {
             urlGetData = new URL(mUrl);
-            HttpURLConnection urlConnectionGetChanges = (HttpURLConnection) urlGetData.openConnection();
-            BufferedReader bufferedReaderGetChanges = new BufferedReader(new InputStreamReader(urlConnectionGetChanges.getInputStream()));
+            HttpURLConnection urlConnectionGetChanges   =   (HttpURLConnection) urlGetData.openConnection();
+            BufferedReader bufferedReaderGetChanges     =   new BufferedReader(new InputStreamReader(urlConnectionGetChanges.getInputStream()));
             String nextGetChanges = bufferedReaderGetChanges.readLine();
             while (nextGetChanges != null) {
                 dataGetChanges += nextGetChanges;
-                nextGetChanges = bufferedReaderGetChanges.readLine();
+                nextGetChanges =  bufferedReaderGetChanges.readLine();
             }
             urlConnectionGetChanges.disconnect();
             return dataGetChanges;

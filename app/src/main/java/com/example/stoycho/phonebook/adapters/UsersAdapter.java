@@ -21,27 +21,27 @@ import java.util.List;
 
 public class UsersAdapter extends BaseAdapter {
 
-    private Context         context;
-    private List<User>      users;
-    private List<Country>   countries;
-    private LayoutInflater  inflater;
+    private Context         mContext;
+    private List<User>      mUsers;
+    private List<Country>   mCountries;
+    private LayoutInflater  mInflater;
 
     public UsersAdapter(Context context, List<User> users, List<Country> countries)
     {
-        this.context        = context;
-        this.users          = users;
-        this.countries      = countries;
-        inflater            = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.mContext        = context;
+        this.mUsers          = users;
+        this.mCountries      = countries;
+        this.mInflater       = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return users.size();
+        return mUsers.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return users.get(position);
+        return mUsers.get(position);
     }
 
     @Override
@@ -53,31 +53,32 @@ public class UsersAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
         if(convertView == null)
-            convertView = inflater.inflate(R.layout.user_item, parent, false);
+            convertView = mInflater.inflate(R.layout.user_item, parent, false);
 
-        User user = users.get(position);
-        Country country = countries.get(position);
-        TextView name = (TextView) convertView.findViewById(R.id.user_name);
-        TextView phone = (TextView) convertView.findViewById(R.id.user_phone);
-        ImageView delete = (ImageView) convertView.findViewById(R.id.delete);
-        ImageView edit = (ImageView) convertView.findViewById(R.id.edit);
+        User user           = mUsers.get(position);
+        Country country     = mCountries.get(position);
+
+        TextView name       = (TextView)    convertView.findViewById(R.id.user_name);
+        TextView phone      = (TextView)    convertView.findViewById(R.id.user_phone);
+        ImageView delete    = (ImageView)   convertView.findViewById(R.id.delete);
+        ImageView edit      = (ImageView)   convertView.findViewById(R.id.edit);
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((HomeActivity)context).deleteUserAlert(position);
+                ((HomeActivity)mContext).deleteUserAlert(position);
             }
         });
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((HomeActivity)context).onEdit(position);
+                ((HomeActivity)mContext).onEdit(position);
             }
         });
 
         name.setText(user.getFirstName());
-        String phoneNumber = context.getString(R.string.plus) + country.getCallingCode() + user.getPhoneNumber();
+        String phoneNumber = mContext.getString(R.string.plus) + country.getCallingCode() + user.getPhoneNumber();
         phone.setText(phoneNumber);
 
         return convertView;
@@ -85,7 +86,7 @@ public class UsersAdapter extends BaseAdapter {
 
     public void setUsersAndCountries(List<User> users, List<Country> countries)
     {
-        this.users = users;
-        this.countries = countries;
+        this.mUsers = users;
+        this.mCountries = countries;
     }
 }
