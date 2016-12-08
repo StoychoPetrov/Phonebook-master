@@ -128,7 +128,8 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
 
     private void selectAll()
     {
-        ((HomeActivity)getActivity()).setFilterCountry(null);
+        if(getActivity() instanceof HomeActivity)
+            ((HomeActivity)getActivity()).setFilterCountry(null);
         getFragmentManager().popBackStack();
     }
 }

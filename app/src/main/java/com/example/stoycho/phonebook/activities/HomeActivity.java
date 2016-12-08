@@ -70,10 +70,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void setListeners()
     {
-        mNewContactTxt.setOnClickListener(this);
-        mListWithUsers.setOnItemClickListener(this);
+        mNewContactTxt      .setOnClickListener(this);
+        mListWithUsers      .setOnItemClickListener(this);
         mSelectCountryLayout.setOnClickListener(this);
-        mSelectGenderLayout.setOnClickListener(this);
+        mSelectGenderLayout .setOnClickListener(this);
         mGenderDialog.setOnDismissListener(this);
     }
 
@@ -179,6 +179,16 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int clickedViewId = view.getId();
+        switch (clickedViewId)
+        {
+            case R.id.delete:
+                deleteUserAlert(position);
+                break;
+            case R.id.edit:
+                onEdit(position);
+                break;
+        }
         InformationDialog dialog = new InformationDialog(this,mCountries.get(position),mUsers.get(position));
         dialog.show();
     }

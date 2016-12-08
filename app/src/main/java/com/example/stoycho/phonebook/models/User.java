@@ -1,12 +1,8 @@
 package com.example.stoycho.phonebook.models;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.stoycho.phonebook.database.Database;
 
 import org.json.JSONException;
 import org.json.JSONObject;

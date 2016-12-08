@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.stoycho.phonebook.R;
@@ -19,7 +20,7 @@ import java.util.List;
  * Created by Stoycho on 10/22/2016.
  */
 
-public class UsersAdapter extends BaseAdapter {
+public class UsersAdapter extends BaseAdapter{
 
     private Context         mContext;
     private List<User>      mUsers;
@@ -50,7 +51,7 @@ public class UsersAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
 
         if(convertView == null)
             convertView = mInflater.inflate(R.layout.user_item, parent, false);
@@ -60,20 +61,20 @@ public class UsersAdapter extends BaseAdapter {
 
         TextView name       = (TextView)    convertView.findViewById(R.id.user_name);
         TextView phone      = (TextView)    convertView.findViewById(R.id.user_phone);
-        ImageView delete    = (ImageView)   convertView.findViewById(R.id.delete);
-        ImageView edit      = (ImageView)   convertView.findViewById(R.id.edit);
+        final ImageView delete    = (ImageView)   convertView.findViewById(R.id.delete);
+        final ImageView edit      = (ImageView)   convertView.findViewById(R.id.edit);
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ((HomeActivity)mContext).deleteUserAlert(position);
+            public void onClick(View view) {
+                ((ListView)parent).performItemClick(view,position,0);
             }
         });
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ((HomeActivity)mContext).onEdit(position);
+            public void onClick(View view) {
+                ((ListView)parent).performItemClick(view,position,0);
             }
         });
 
