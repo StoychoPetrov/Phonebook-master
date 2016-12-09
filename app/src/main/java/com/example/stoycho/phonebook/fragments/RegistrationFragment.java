@@ -229,7 +229,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             imm.hideSoftInputFromWindow(viewFocus.getWindowToken(), 0);
         }
         getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
-                .add(R.id.replace_layout,new CountriesFragment(),CountriesFragment.COIUNTRIES_FRAGMENT_TAG).addToBackStack(null).commit();
+                .add(R.id.replace_layout,new CountriesFragment(),CountriesFragment.COIUNTRIES_FRAGMENT_TAG).addToBackStack(CountriesFragment.COUNTRY_BACKSTACK_NAME).commit();
     }
 
     private boolean emailValidation(String email) {

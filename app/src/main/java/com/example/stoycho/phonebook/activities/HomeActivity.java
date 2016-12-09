@@ -239,11 +239,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                         deleteUser(position);
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
+                .setNegativeButton(android.R.string.no,null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
@@ -287,7 +283,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onBackStackChanged() {
-        if (getIntent() != null && getIntent().hasExtra(BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(BUNDLE_USER_KEY))   // listener for backstack, in case there is intent with user and country for update, updating user and remove intent
+        if (getIntent() != null && getIntent().hasExtra(BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(BUNDLE_USER_KEY))   // listener for backstack changing, in case there is intent with user and country for update, updating user and remove intent
         {
             User    user    = getIntent().getExtras().getParcelable(BUNDLE_USER_KEY);
             Country country = getIntent().getExtras().getParcelable(BUNDLE_COUNTRY_KEY);

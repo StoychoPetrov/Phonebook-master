@@ -59,10 +59,10 @@ public class UsersAdapter extends BaseAdapter{
         User user           = mUsers.get(position);
         Country country     = mCountries.get(position);
 
-        TextView name       = (TextView)    convertView.findViewById(R.id.user_name);
-        TextView phone      = (TextView)    convertView.findViewById(R.id.user_phone);
-        final ImageView delete    = (ImageView)   convertView.findViewById(R.id.delete);
-        final ImageView edit      = (ImageView)   convertView.findViewById(R.id.edit);
+        TextView name           = (TextView)    convertView.findViewById(R.id.user_name);
+        TextView phone          = (TextView)    convertView.findViewById(R.id.user_phone);
+        final ImageView delete  = (ImageView)   convertView.findViewById(R.id.delete);
+        final ImageView edit    = (ImageView)   convertView.findViewById(R.id.edit);
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override

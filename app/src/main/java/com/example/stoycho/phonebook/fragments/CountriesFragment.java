@@ -34,8 +34,10 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
     private View                            mDivider;
     private CountriesDatabaseCommunication  mCountriesDatabaseCommunication;
 
-    public  final static String COIUNTRIES_FRAGMENT_TAG = "countryFragment";
+    public  final static String COUNTRY_BACKSTACK_NAME      = "country_backstack";
+    public  final static String COIUNTRIES_FRAGMENT_TAG     = "countryFragment";
     private final static String FILTER_COUNTRY_KEY          = "filter_country";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,10 +102,10 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         List<Fragment> fragments = getFragmentManager().getFragments();
-        RegistrationFragment fragment = (RegistrationFragment) getFragmentManager().findFragmentByTag(RegistrationFragment.REGISTRATION_FRAGMENT_TAG);
-        if(fragment != null) {
-           getFragmentManager().popBackStack(HomeActivity.REGISTRATION_BACKSTACK_NAME,0);
-            fragment.setSelectedCountry(mCountries.get(position));
+        RegistrationFragment registrationFragment = (RegistrationFragment) getFragmentManager().findFragmentByTag(RegistrationFragment.REGISTRATION_FRAGMENT_TAG);
+        if(registrationFragment != null) {
+           getFragmentManager().popBackStack(COUNTRY_BACKSTACK_NAME,0);
+            registrationFragment.setSelectedCountry(mCountries.get(position));
         }
         else if(fragments.size() == 1)
             getActivity().getIntent().putExtra(FILTER_COUNTRY_KEY,mCountries.get(position));
