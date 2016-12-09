@@ -2,6 +2,7 @@ package com.example.stoycho.phonebook.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,7 +34,8 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
     private View                            mDivider;
     private CountriesDatabaseCommunication  mCountriesDatabaseCommunication;
 
-    public final static String COIUNTRIES_FRAGMENT_TAG = "countryFragment";
+    public  final static String COIUNTRIES_FRAGMENT_TAG = "countryFragment";
+    private final static String FILTER_COUNTRY_KEY          = "filter_country";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,14 +100,13 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         List<Fragment> fragments = getFragmentManager().getFragments();
-        if(fragments.size() > 1) {
-            Fragment fragment = fragments.get(getFragmentManager()
-                    .getFragments().size() - 2);
-            if (fragment instanceof RegistrationFragment)
-                ((RegistrationFragment) fragment).setSelectedCountry(mCountries.get(position));
+        RegistrationFragment fragment = (RegistrationFragment) getFragmentManager().findFragmentByTag(RegistrationFragment.REGISTRATION_FRAGMENT_TAG);
+        if(fragment != null) {
+           getFragmentManager().popBackStack(HomeActivity.REGISTRATION_BACKSTACK_NAME,0);
+            fragment.setSelectedCountry(mCountries.get(position));
         }
         else if(fragments.size() == 1)
-            ((HomeActivity)getActivity()).setFilterCountry(mCountries.get(position));
+            getActivity().getIntent().putExtra(FILTER_COUNTRY_KEY,mCountries.get(position));
 
         getFragmentManager().popBackStack();
         View viewFocus = getActivity().getCurrentFocus();
@@ -128,8 +129,7 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
 
     private void selectAll()
     {
-        if(getActivity() instanceof HomeActivity)
-            ((HomeActivity)getActivity()).setFilterCountry(null);
+        getActivity().getIntent().putExtra(FILTER_COUNTRY_KEY,"");
         getFragmentManager().popBackStack();
     }
 }

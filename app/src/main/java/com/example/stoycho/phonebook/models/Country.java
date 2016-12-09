@@ -57,7 +57,7 @@ public class Country implements Parcelable {
     }
 
     private void parcefromJson(JSONObject country) throws JSONException {
-        JSONArray countryCodes  = country.getJSONArray("calling_codes");
+        JSONArray countryCodes  = country.getJSONArray("callingCodes");
         this.mCountryName       = country.getString("name");
         this.mCallingCode       = countryCodes.length() > 0 ? countryCodes.getString(0) : null;
     }

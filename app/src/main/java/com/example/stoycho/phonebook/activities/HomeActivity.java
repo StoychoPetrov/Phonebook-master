@@ -3,6 +3,7 @@ package com.example.stoycho.phonebook.activities;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,7 +29,7 @@ import com.example.stoycho.phonebook.tasks.DownloadData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends FragmentActivity implements View.OnClickListener, AdapterView.OnItemClickListener,DialogInterface.OnDismissListener {
+public class HomeActivity extends FragmentActivity implements View.OnClickListener, AdapterView.OnItemClickListener,DialogInterface.OnDismissListener,FragmentManager.OnBackStackChangedListener {
 
     private ListView        mListWithUsers;
     private List<Country>   mCountries;
@@ -43,7 +44,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private GenderDialog    mGenderDialog;
     private Country         mSelectedFilterCountry;
     private LinearLayout    mFilterLayout;
-    private final static String ALL_COUNTRIES_ARE_SELECTED = "all_selected";
+
+    private final static String ALL_COUNTRIES_ARE_SELECTED  = "all_selected";
+    private final static String BUNDLE_USER_KEY             = "user";
+    private final static String BUNDLE_COUNTRY_KEY          = "country";
+    private final static String REFRESH_USERS_KEY           =  "refresh_users";
+    private final static String UPDATE_USER                 = "update_user";
+    private final static String FILTER_COUNTRY_KEY          = "filter_country";
+    public  final static String REGISTRATION_BACKSTACK_NAME = "registration";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         setListeners();
         loadCountries();
         loadUsers();
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
     private void initUI()
@@ -152,7 +161,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void onAddUser()                                                           //start RegisterFragment
     {
         getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),RegistrationFragment.REGISTRATION_FRAGMENT_TAG)
-                .addToBackStack(null).commit();
+                .addToBackStack(REGISTRATION_BACKSTACK_NAME).commit();
     }
 
     public void updateUser(User user,Country country,int position)                     //update user in ListView
@@ -188,9 +197,11 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.edit:
                 onEdit(position);
                 break;
+            case R.id.user_item:
+                InformationDialog dialog = new InformationDialog(this,mCountries.get(position),mUsers.get(position));
+                dialog.show();
+                break;
         }
-        InformationDialog dialog = new InformationDialog(this,mCountries.get(position),mUsers.get(position));
-        dialog.show();
     }
 
     @Override
@@ -264,8 +275,9 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         bundle.putParcelable("user",user);
         registrationFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,registrationFragment,RegistrationFragment.REGISTRATION_FRAGMENT_TAG)
-                .addToBackStack(null).commit();
+                .addToBackStack(REGISTRATION_BACKSTACK_NAME).commit();
         mTitleTxt.setText(getString(R.string.editContact));
+        onPause();
     }
 
     public void setmTitle()
@@ -274,9 +286,25 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     }
 
     @Override
-    public void onResume()
-    {
-        super.onResume();
-        mTitleTxt.setText(getString(R.string.contacts));
+    public void onBackStackChanged() {
+        if (getIntent() != null && getIntent().hasExtra(BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(BUNDLE_USER_KEY))   // listener for backstack, in case there is intent with user and country for update, updating user and remove intent
+        {
+            User    user    = getIntent().getExtras().getParcelable(BUNDLE_USER_KEY);
+            Country country = getIntent().getExtras().getParcelable(BUNDLE_COUNTRY_KEY);
+            if(getIntent().hasExtra(REFRESH_USERS_KEY))
+                refreshUsers(user,country);
+            else if(getIntent().hasExtra(UPDATE_USER))
+                updateUser(user,country,getIntent().getExtras().getInt("position"));
+            getIntent().removeExtra(BUNDLE_COUNTRY_KEY);
+            getIntent().removeExtra(BUNDLE_USER_KEY);
+            setmTitle();
+        }
+        else if(getIntent().getExtras() != null && getIntent().hasExtra(FILTER_COUNTRY_KEY))
+        {
+            if(getIntent().getExtras().get(FILTER_COUNTRY_KEY) instanceof Country)
+                setFilterCountry((Country) getIntent().getParcelableExtra(FILTER_COUNTRY_KEY));
+            else
+                setFilterCountry(null);
+        }
     }
 }

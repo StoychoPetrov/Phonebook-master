@@ -17,11 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stoycho.phonebook.R;
-import com.example.stoycho.phonebook.activities.HomeActivity;
 import com.example.stoycho.phonebook.database.UsersAndCountruesDatabaseComunication;
 import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.models.Country;
-import com.example.stoycho.phonebook.database.Database;
 import com.example.stoycho.phonebook.models.User;
 
 import java.util.ArrayList;
@@ -46,6 +44,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private final static String BUNDLE_USER_KEY             = "user";
     private final static String BUNDLE_COUNTRY_KEY          = "country";
     public  final static String REGISTRATION_FRAGMENT_TAG   = "registerFragment";
+    private final static String REFRESH_USERS               = "refresh_users";
+    private final static String UPDATE_USER                = "update_user";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,13 +160,15 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
                 ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));
         Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
-        int userId = getArguments().getParcelable(BUNDLE_USER_KEY);
+        int userId = ((User)getArguments().getParcelable(BUNDLE_USER_KEY)).getId();
         user.setId(userId);
         if(usersDatabaseCommunication.updateUserInDatabase(user)) {
             Toast.makeText(getActivity(), R.string.successUpdate, Toast.LENGTH_SHORT).show();
-            ((HomeActivity)getActivity()).updateUser(user,country,getArguments().getInt("position"));
+            getActivity().getIntent().putExtra(BUNDLE_USER_KEY,user);
+            getActivity().getIntent().putExtra(BUNDLE_COUNTRY_KEY,country);
+            getActivity().getIntent().putExtra("position",getArguments().getInt("position"));
+            getActivity().getIntent().putExtra(UPDATE_USER,true);
             getFragmentManager().popBackStack();
-            ((HomeActivity)getActivity()).setmTitle();
         }
         else
             Toast.makeText(getActivity(),R.string.notSuccessEdit,Toast.LENGTH_SHORT).show();
@@ -210,9 +212,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         if(id != -1) {
             user.setId((int) id);
             Toast.makeText(getActivity(), R.string.message_for_register, Toast.LENGTH_SHORT).show();
-            ((HomeActivity)getActivity()).refreshUsers(user,country);
+            getActivity().getIntent().putExtra(BUNDLE_USER_KEY,user);
+            getActivity().getIntent().putExtra(BUNDLE_COUNTRY_KEY,country);
+            getActivity().getIntent().putExtra(REFRESH_USERS,true);
             getFragmentManager().popBackStack();
-            ((HomeActivity)getActivity()).setmTitle();
         }
         else
             Toast.makeText(getActivity(),R.string.register_error,Toast.LENGTH_SHORT).show();
