@@ -129,7 +129,7 @@ public class CountriesFragment extends Fragment implements TextWatcher, AdapterV
 
     private void selectAll()
     {
-        getActivity().getIntent().putExtra(FILTER_COUNTRY_KEY,"");
+        getActivity().getIntent().putExtra(FILTER_COUNTRY_KEY, new Country());
         getFragmentManager().popBackStack();
     }
 }

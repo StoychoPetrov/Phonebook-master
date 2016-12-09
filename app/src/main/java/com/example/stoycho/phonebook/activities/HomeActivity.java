@@ -172,16 +172,16 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mUserAdapter.notifyDataSetChanged();
     }
 
-    public void setFilterCountry(Country countryName)
+    public void setFilterCountry(Country country)
     {
-        mSelectedFilterCountry = countryName;
+        mSelectedFilterCountry = country;
         mCountries = new ArrayList<>();
-        if(countryName == null)
+        if(country.getCountryName() == null)
             mFilterCountryTxt.setText(getString(R.string.all));
         else
-            mFilterCountryTxt.setText(countryName.getCountryName());
+            mFilterCountryTxt.setText(country.getCountryName());
         String gender = mFilterGenderTxt.getText().toString();
-        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryName != null ? countryName.getId():-1, !gender.equals("All") ? gender : null,null);
+        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,country.getCountryName() != null ? country.getId():-1, !gender.equals("All") ? gender : null,null);
         mUserAdapter.setUsersAndCountries(mUsers, mCountries);
         mUserAdapter.notifyDataSetChanged();
     }
@@ -301,10 +301,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         }
         else if(getIntent().getExtras() != null && getIntent().hasExtra(FILTER_COUNTRY_KEY))
         {
-            if(getIntent().getExtras().get(FILTER_COUNTRY_KEY) instanceof Country)
                 setFilterCountry((Country) getIntent().getParcelableExtra(FILTER_COUNTRY_KEY));
-            else
-                setFilterCountry(null);
         }
     }
 }
