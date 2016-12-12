@@ -7,6 +7,7 @@
     android:background="@android:color/white"
     tools:context="com.example.stoycho.phonebook.activities.HomeActivity">
 
+    <!-- App bar -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -25,6 +26,7 @@
 
     </RelativeLayout>
 
+    <!-- Main layout which will be replaced in fragment manager -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,6 +34,7 @@
         android:layout_below="@+id/bar"
         android:background="@android:color/white">
 
+        <!-- Layout for filter which is visible when there are more than one contact -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
@@ -40,7 +43,7 @@
             android:background="@drawable/edittext_drawable"
             android:layout_margin="20dp"
             android:visibility="gone">
-
+            <!-- Layout about filter by country -->
            <RelativeLayout
                android:layout_width="match_parent"
                android:layout_height="0dp"
@@ -63,6 +66,7 @@
                    android:id="@+id/filter_country"
                    android:text="@string/all"
                    android:layout_toRightOf="@+id/country"
+                   android:layout_toEndOf="@+id/country"
                    android:layout_centerVertical="true"
                    android:paddingLeft="10dp"
                    android:paddingRight="10dp"
@@ -75,6 +79,7 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
+            <!-- Layout about filter by gender -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -97,6 +102,7 @@
                     android:id="@+id/filter_gender"
                     android:text="@string/all"
                     android:layout_toRightOf="@+id/gender"
+                    android:layout_toEndOf="@+id/gender"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -110,25 +116,28 @@
                 android:background="@android:color/darker_gray"/>
 
         </LinearLayout>
-
-       <ListView
+        <!-- Recycler view about contacts -->
+       <android.support.v7.widget.RecyclerView
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:id="@+id/listForUsers"
+           android:scrollbars="vertical"
+           android:id="@+id/recycleView"
            android:layout_below="@+id/search_bar" />
 
+        <!-- Button for add a new contact -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:background="@drawable/button_states"
             android:gravity="center"
             android:id="@+id/add_user"
-            android:layout_below="@+id/listForUsers"
+            android:layout_below="@+id/recycleView"
             android:layout_centerHorizontal="true"
             android:text="@string/new_contact"
             android:textStyle="bold"
             android:textColor="@drawable/button_text_drawable"
             android:drawableLeft="@android:drawable/ic_input_add"
+            android:drawableStart="@android:drawable/ic_input_add"
             android:drawablePadding="5dp"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"

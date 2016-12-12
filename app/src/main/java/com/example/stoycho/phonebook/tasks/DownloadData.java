@@ -21,7 +21,7 @@ public class DownloadData extends AsyncTask<Void, Void, String> {
 
     private String mUrl;
 
-    public DownloadData(String url)
+    protected DownloadData(String url)
     {
         mUrl = url;
     }

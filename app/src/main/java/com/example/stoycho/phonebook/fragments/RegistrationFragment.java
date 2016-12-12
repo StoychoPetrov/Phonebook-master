@@ -21,6 +21,7 @@ import com.example.stoycho.phonebook.database.UsersAndCountruesDatabaseComunicat
 import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.models.Country;
 import com.example.stoycho.phonebook.models.User;
+import com.example.stoycho.phonebook.utils.Validations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private EditText    mEmailEdb;
     private EditText    mPhoneNumberEdb;
     private TextView    mCallingCodeTxt;
-    private RadioButton mMale;
-    private RadioButton mFemale;
-    private Button      mAdd;
+    private RadioButton mMaleRadioBtn;
+    private RadioButton mFemaleRadioBtn;
+    private Button      mAddBtn;
     private int         mCountryEdbId;
     private String      mPhoneCode;
     private boolean     mHasEmailError;
@@ -45,7 +46,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private final static String BUNDLE_COUNTRY_KEY          = "country";
     public  final static String REGISTRATION_FRAGMENT_TAG   = "registerFragment";
     private final static String REFRESH_USERS               = "refresh_users";
-    private final static String UPDATE_USER                = "update_user";
+    private final static String UPDATE_USER                 = "update_user";
+    private final static String BUNDLE_POSITION_KEY         = "position";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         setListeners();
         if(getArguments() != null && getArguments().containsKey(BUNDLE_USER_KEY))
             setInformations();
-        // Inflate the layout for this fragment
+
         return root;
     }
 
@@ -72,16 +74,16 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mEmailEdb           = (EditText)    root.findViewById(R.id.email);
         mPhoneNumberEdb     = (EditText)    root.findViewById(R.id.phone_number);
         mCallingCodeTxt     = (TextView)    root.findViewById(R.id.callingCode);
-        mMale               = (RadioButton) root.findViewById(R.id.male);
-        mFemale             = (RadioButton) root.findViewById(R.id.female);
-        mAdd                = (Button)      root.findViewById(R.id.add);
+        mMaleRadioBtn       = (RadioButton) root.findViewById(R.id.male);
+        mFemaleRadioBtn     = (RadioButton) root.findViewById(R.id.female);
+        mAddBtn             = (Button)      root.findViewById(R.id.add);
     }
 
     private void setListeners()
     {
-        mAdd.           setOnClickListener(this);
-        mCountryEdb.    setOnClickListener(this);
-        mEmailEdb.      setOnFocusChangeListener(this);
+        mAddBtn.setOnClickListener(this);
+        mCountryEdb.setOnClickListener(this);
+        mEmailEdb.setOnFocusChangeListener(this);
         mPhoneNumberEdb.setOnFocusChangeListener(this);
     }
 
@@ -90,7 +92,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         if(getArguments() != null) {
             Country country = getArguments().getParcelable(BUNDLE_COUNTRY_KEY);
             User user       = getArguments().getParcelable(BUNDLE_USER_KEY);
-            if(user != null && country != null) {
+            if(user != null && country != null) {                               // if user is not null, set user information in boxes.
                 mFirstNameEdb.setText(user.getFirstName());
                 mLastNameEdb.setText(user.getLastName());
                 mEmailEdb.setText(user.getEmail());
@@ -102,16 +104,16 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 mCallingCodeTxt.setText(code);
                 String gender = user.getGender();
                 if (gender != null && gender.equals(getString(R.string.male)))
-                    mMale.setChecked(true);
+                    mMaleRadioBtn.setChecked(true);
                 else
-                    mFemale.setChecked(true);
+                    mFemaleRadioBtn.setChecked(true);
             }
         }
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View clickedView) {
+        int id = clickedView.getId();
 
         switch (id)
         {
@@ -132,7 +134,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private void onEdit()
     {
         if(!mFirstNameEdb.getText().toString().equals("") && !mLastNameEdb.getText().toString().equals("") && !mCountryEdb.getText().toString().equals("")
-                && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMale.isChecked() || mFemale.isChecked()))
+                && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMaleRadioBtn.isChecked() || mFemaleRadioBtn.isChecked()))                  // if every box is correct, will show dialog with question to user, in another case will show message with error.
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.updateInfo)
@@ -155,18 +157,25 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void updateUser()
     {
-        UsersDatabaseCommunication usersDatabaseCommunication = new UsersDatabaseCommunication(getActivity());
+        UsersDatabaseCommunication usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(getActivity());
 
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
-                ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));
+                ,mPhoneNumberEdb.getText().toString(),mMaleRadioBtn.isChecked() ? getString(R.string.male):getString(R.string.female));
         Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
-        int userId = ((User)getArguments().getParcelable(BUNDLE_USER_KEY)).getId();
+        User parcedUser = getArguments().getParcelable(BUNDLE_USER_KEY);
+        int userId;
+
+        if(parcedUser != null)
+            userId = parcedUser.getId();
+        else
+            userId = -1;
+
         user.setId(userId);
-        if(usersDatabaseCommunication.updateUserInDatabase(user)) {
+        if(usersDatabaseCommunication.updateUserInDatabase(user)) {                                     // if status of update query is siccess ,it will pop the fragment and show message. In other case will show error message.
             Toast.makeText(getActivity(), R.string.successUpdate, Toast.LENGTH_SHORT).show();
             getActivity().getIntent().putExtra(BUNDLE_USER_KEY,user);
             getActivity().getIntent().putExtra(BUNDLE_COUNTRY_KEY,country);
-            getActivity().getIntent().putExtra("position",getArguments().getInt("position"));
+            getActivity().getIntent().putExtra(BUNDLE_POSITION_KEY,getArguments().getInt(BUNDLE_POSITION_KEY));
             getActivity().getIntent().putExtra(UPDATE_USER,true);
             getFragmentManager().popBackStack();
         }
@@ -174,10 +183,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             Toast.makeText(getActivity(),R.string.notSuccessEdit,Toast.LENGTH_SHORT).show();
     }
 
-    private void onAdd()
+    private void onAdd()                                                                                                                                    //if every box is correct , it wil show question to user.
     {
         if(!mFirstNameEdb.getText().toString().equals("") && !mLastNameEdb.getText().toString().equals("") && !mCountryEdb.getText().toString().equals("")
-                && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMale.isChecked() || mFemale.isChecked()))
+                && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMaleRadioBtn.isChecked() || mFemaleRadioBtn.isChecked()))
         {
             List<User> users = UsersAndCountruesDatabaseComunication.getInstance(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString());
             if(users.size() == 0) {
@@ -185,7 +194,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 builder.setMessage(R.string.message_for_dialog)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                registerUser();
+                                registerUser();                                                                                                             // if user press yes then try saving a new contact in database.
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -206,9 +215,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         UsersDatabaseCommunication usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(getActivity());
 
         User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
-                ,mPhoneNumberEdb.getText().toString(),mMale.isChecked() ? getString(R.string.male):getString(R.string.female));
+                ,mPhoneNumberEdb.getText().toString(),mMaleRadioBtn.isChecked() ? getString(R.string.male):getString(R.string.female));
         Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
-        long id = usersDatabaseCommunication.saveInDatabase(user);
+        long id = usersDatabaseCommunication.saveInDatabase(user);                                                      // Trying to save the new contact. If the query is successed, the id is different from -1. If it is equal to -1, there is error with query.
         if(id != -1) {
             user.setId((int) id);
             Toast.makeText(getActivity(), R.string.message_for_register, Toast.LENGTH_SHORT).show();
@@ -221,7 +230,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             Toast.makeText(getActivity(),R.string.register_error,Toast.LENGTH_SHORT).show();
     }
 
-    private void onCountry()
+    private void onCountry()                                                                                            // User has selected country box and it will start CountryFragment
     {
         View viewFocus = getActivity().getCurrentFocus();
         if (viewFocus != null) {
@@ -230,15 +239,6 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         }
         getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
                 .add(R.id.replace_layout,new CountriesFragment(),CountriesFragment.COIUNTRIES_FRAGMENT_TAG).addToBackStack(CountriesFragment.COUNTRY_BACKSTACK_NAME).commit();
-    }
-
-    private boolean emailValidation(String email) {
-        return email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    private boolean phoneValidation()
-    {
-        return PhoneNumberUtils.isGlobalPhoneNumber(mPhoneNumberEdb.getText().toString());
     }
 
     public void setSelectedCountry(Country country)
@@ -251,8 +251,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        int id = v.getId();
+    public void onFocusChange(View view, boolean hasFocus) {
+        int id = view.getId();
         switch (id)
         {
             case R.id.email:
@@ -268,7 +268,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void checkPhoneValidation()
     {
-        if(!phoneValidation())
+        if(!Validations.phoneValidation(mPhoneNumberEdb.getText().toString()))
         {
             mPhoneNumberEdb.setError(getString(R.string.phone_error));
             mHasPhoneError = true;
@@ -279,7 +279,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void checkEmailValidation()
     {
-        if(!emailValidation(mEmailEdb.getText().toString()))
+        if(!Validations.emailValidation(mEmailEdb.getText().toString()))
         {
             mEmailEdb.setError(getString(R.string.email_error));
             mHasEmailError = true;

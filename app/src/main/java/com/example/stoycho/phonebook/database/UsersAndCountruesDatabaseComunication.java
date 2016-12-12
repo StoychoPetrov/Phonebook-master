@@ -2,7 +2,6 @@ package com.example.stoycho.phonebook.database;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.stoycho.phonebook.models.Country;
@@ -35,14 +34,10 @@ public class UsersAndCountruesDatabaseComunication extends Database {
     private final static String COLUMN_COUNTRY_NAME     = "country_name";
     private final static String COLUMN_CALLING_CODE     = "calling_code";
 
-    public final static int WITHOUT_COUNTRY_ID = -1;
-    private static UsersAndCountruesDatabaseComunication instance = null;
+    public final    static int                                      WITHOUT_COUNTRY_ID   = -1;
+    private         static UsersAndCountruesDatabaseComunication    instance             = null;
 
-    public UsersAndCountruesDatabaseComunication(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
-
-    public UsersAndCountruesDatabaseComunication(Context context) {
+    private UsersAndCountruesDatabaseComunication(Context context) {
         super(context);
     }
 
@@ -61,7 +56,7 @@ public class UsersAndCountruesDatabaseComunication extends Database {
             query += " WHERE users." + COLUMN_PHONE_NUMBER + " = " + phone;
 
         List<User> users        = new ArrayList<>();
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase database = getWritableDatabase();
         Cursor cursor           = database.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {

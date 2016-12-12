@@ -18,7 +18,6 @@ import java.util.List;
 public class CountriesDatabaseCommunication extends Database {
 
 
-    private Context mContext;
     /**************** Countries columns *************************/
     private final static String COLUMN_COUNTRY_ID       = "country_id";
     private final static String COLUMN_COUNTRY_NAME     = "country_name";
@@ -27,17 +26,11 @@ public class CountriesDatabaseCommunication extends Database {
 
     public final static int SELECT_ALL_COUNTRIES        = 0;
     public final static int SELECT_SEARCH_PLACES        = 1;
+
     private static CountriesDatabaseCommunication instance = null;
 
-
-    public CountriesDatabaseCommunication(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-        mContext = context;
-    }
-
-    public CountriesDatabaseCommunication(Context context) {
+    private CountriesDatabaseCommunication(Context context) {
         super(context);
-        mContext = context;
     }
 
     public static CountriesDatabaseCommunication getInstance(Context context)
@@ -49,7 +42,7 @@ public class CountriesDatabaseCommunication extends Database {
 
     public long saveInDatabase(Country country)
     {
-        SQLiteDatabase db       = this.getWritableDatabase();
+        SQLiteDatabase db       = getWritableDatabase();
         ContentValues values    = new ContentValues();
         values.put(COLUMN_COUNTRY_NAME, country.getCountryName());
         values.put(COLUMN_CALLING_CODE, country.getCallingCode());
@@ -58,7 +51,7 @@ public class CountriesDatabaseCommunication extends Database {
         return resultFromQuery;
     }
 
-    public List<Country> selectAllCountriesFromDatabase(Context context, int selectQuery, String nameForWhereClause)
+    public List<Country> selectAllCountriesFromDatabase(int selectQuery, String nameForWhereClause)
     {
         String query = null;
         List<Country> countries = new ArrayList<>();
@@ -68,7 +61,7 @@ public class CountriesDatabaseCommunication extends Database {
             query = "SELECT * FROM " + COUNTRIES_TABLE_NAME
                     + " WHERE " + COLUMN_COUNTRY_NAME + " LIKE " + "'" + nameForWhereClause + "%'";
         if(query != null) {
-            SQLiteDatabase db = this.getWritableDatabase();
+            SQLiteDatabase db = getWritableDatabase();
             Cursor cursor = db.rawQuery(query, null);
             if (cursor.moveToFirst()) {
                 do {
@@ -83,5 +76,18 @@ public class CountriesDatabaseCommunication extends Database {
             db.close();
         }
         return countries;
+    }
+
+    public int getCountOfCountries()
+    {
+        String query = "SELECT COUNT(*) FROM " + COUNTRIES_TABLE_NAME;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+
+        return count;
     }
 }

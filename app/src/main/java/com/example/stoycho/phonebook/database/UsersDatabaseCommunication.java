@@ -2,7 +2,6 @@ package com.example.stoycho.phonebook.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.stoycho.phonebook.models.User;
@@ -25,12 +24,8 @@ public class UsersDatabaseCommunication extends Database {
     private final static String USERS_TABLE_NAME        = "users";
     private static UsersDatabaseCommunication instance  = null;
 
-    public UsersDatabaseCommunication(Context context) {
+    private UsersDatabaseCommunication(Context context) {
         super(context);
-    }
-
-    public UsersDatabaseCommunication(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
     }
 
     public static UsersDatabaseCommunication getInstance(Context context)
@@ -41,8 +36,8 @@ public class UsersDatabaseCommunication extends Database {
     }
 
     public long saveInDatabase(User user) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+        SQLiteDatabase db       = getWritableDatabase();
+        ContentValues values    = new ContentValues();
         values.put(COLUMN_FIRST_NAME,       user.getFirstName());
         values.put(COLUMN_LAST_NAME,        user.getLastName());
         values.put(COLUMN_EMAIL,            user.getEmail());
@@ -57,9 +52,9 @@ public class UsersDatabaseCommunication extends Database {
 
     public boolean updateUserInDatabase(User user)
     {
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase database = getWritableDatabase();
 
-        ContentValues values = new ContentValues();
+        ContentValues values    = new ContentValues();
         values.put(COLUMN_FIRST_NAME,    user.getFirstName());
         values.put(COLUMN_LAST_NAME,     user.getLastName());
         values.put(COLUMN_EMAIL,         user.getEmail());
@@ -75,7 +70,7 @@ public class UsersDatabaseCommunication extends Database {
 
     public boolean deleteUserFromDatabase(User user)
     {
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase database = getWritableDatabase();
         boolean result          = database.delete(USERS_TABLE_NAME,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())}) > 0;
         database.close();
         return result;

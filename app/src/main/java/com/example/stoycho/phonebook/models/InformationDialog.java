@@ -18,19 +18,11 @@ public class InformationDialog extends Dialog {
     private Country mCountry;
     private User    mUser;
 
-    protected InformationDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-    }
-
     public InformationDialog(Context context,Country country, User user) {
         super(context);
-        this.mContext   = context;
-        this.mCountry   = country;
-        this.mUser      = user;
-    }
-
-    public InformationDialog(Context context, int themeResId) {
-        super(context, themeResId);
+        mContext   = context;
+        mCountry   = country;
+        mUser      = user;
     }
 
     @Override
@@ -45,13 +37,15 @@ public class InformationDialog extends Dialog {
         TextView phoneNumberTxt    = (TextView) findViewById(R.id.phone_number);
         TextView genderTxt         = (TextView) findViewById(R.id.gender);
 
-        String phone = mContext.getString(R.string.plus) + mCountry.getCallingCode() + mUser.getPhoneNumber();
+        if(mUser != null) {
+            String phone = mContext.getString(R.string.plus) + mCountry.getCallingCode() + mUser.getPhoneNumber();
 
-        firstNameTxt.  setText(mUser.getFirstName());
-        lastNameTxt.   setText(mUser.getLastName());
-        countryTxt.    setText(mCountry.getCountryName());
-        emailTxt.      setText(mUser.getEmail());
-        phoneNumberTxt.setText(phone);
-        genderTxt.     setText(mUser.getGender());
+            firstNameTxt.setText(mUser.getFirstName());
+            lastNameTxt.setText(mUser.getLastName());
+            countryTxt.setText(mCountry.getCountryName());
+            emailTxt.setText(mUser.getEmail());
+            phoneNumberTxt.setText(phone);
+            genderTxt.setText(mUser.getGender());
+        }
     }
 }

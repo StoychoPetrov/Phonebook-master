@@ -16,19 +16,22 @@ public class Country implements Parcelable {
     private String  mCountryName;
     private String  mCallingCode;
 
+    private final static String CALLING_CODE_JSON_KEY = "callingCodes";
+    private final static String NAME_JSON_KEY         = "name";
+
     public Country() {}
 
-    public Country(String countryName, String mCallingCode) {
-        this.mCountryName   = countryName;
-        this.mCallingCode   = mCallingCode;
+    public Country(String countryName, String callingCode) {
+        mCountryName   = countryName;
+        mCallingCode   = callingCode;
     }
 
     public int getId() {
         return mId;
     }
 
-    public void setId(int mId) {
-        this.mId = mId;
+    public void setId(int id) {
+        mId = id;
     }
 
     public String getCountryName() {
@@ -36,42 +39,28 @@ public class Country implements Parcelable {
     }
 
     public void setCountryName(String countryName) {
-        this.mCountryName = countryName;
+        mCountryName = countryName;
     }
 
     public String getCallingCode() {
         return mCallingCode;
     }
 
-    public void setCallingCode(String mCallingCode) {
-        this.mCallingCode = mCallingCode;
+    public void setCallingCode(String callingCode) {
+        mCallingCode = callingCode;
     }
 
-    public Country(Parcel in)
+    private Country(Parcel in)
     {
-        String[] data = new String[3];
-        in.readStringArray(data);
-        this.mId            = Integer.parseInt(data[0]);
-        this.mCountryName   = data[1];
-        this.mCallingCode   = data[2];
+        mId             = in.readInt();
+        mCountryName    = in.readString();
+        mCallingCode    = in.readString();
     }
 
     private void parcefromJson(JSONObject country) throws JSONException {
-        JSONArray countryCodes  = country.getJSONArray("callingCodes");
-        this.mCountryName       = country.getString("name");
-        this.mCallingCode       = countryCodes.length() > 0 ? countryCodes.getString(0) : null;
-    }
-
-    public JSONObject parceToJson()
-    {
-        JSONObject countryJson = new JSONObject();
-        try {
-            countryJson.put("name",this.mCountryName);
-            countryJson.put("callingCode",this.mCallingCode);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return countryJson;
+        JSONArray countryCodes  = country.getJSONArray(CALLING_CODE_JSON_KEY);
+        mCountryName            = country.getString(NAME_JSON_KEY);
+        mCallingCode            = countryCodes.length() > 0 ? countryCodes.getString(0) : null;
     }
 
     public static List<Country> parceCountriesFromJson(String countriesForParce) {
@@ -96,7 +85,9 @@ public class Country implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeStringArray(new String[]{String.valueOf(this.mId),this.mCountryName,this.getCallingCode()});
+        parcel.writeInt(mId);
+        parcel.writeString(mCountryName);
+        parcel.writeString(mCallingCode);
     }
 
     public static final Parcelable.Creator CREATOR = new ClassLoaderCreator() {

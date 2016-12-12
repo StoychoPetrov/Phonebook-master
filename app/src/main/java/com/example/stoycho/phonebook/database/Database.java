@@ -1,19 +1,9 @@
 package com.example.stoycho.phonebook.database;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.example.stoycho.phonebook.models.Country;
-import com.example.stoycho.phonebook.models.User;
-
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Stoycho on 10/20/2016.
@@ -50,14 +40,8 @@ public class Database extends SQLiteOpenHelper {
     private final static String CREATE_COUNTRIES = " CREATE TABLE " + COUNTRIES_TABLE_NAME + " ( " + COLUMN_COUNTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_COUNTRY_NAME + " TEXT, "
             + COLUMN_CALLING_CODE + " TEXT)";
 
-    private static Database database = null;
-
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    public Database(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
     }
 
     @Override
@@ -73,12 +57,5 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + COUNTRIES_TABLE_NAME);
             onCreate(db);
         }
-    }
-
-    public static Database getInstance(Context context)
-    {
-        if(database == null)
-            database = new Database(context);
-        return database;
     }
 }
