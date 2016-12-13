@@ -70,8 +70,8 @@ public class UsersDatabaseCommunication extends Database {
 
     public boolean deleteUserFromDatabase(User user)
     {
-        SQLiteDatabase database = getWritableDatabase();
-        boolean result          = database.delete(USERS_TABLE_NAME,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())}) > 0;
+        SQLiteDatabase  database = getWritableDatabase();
+        boolean         result   = database.delete(USERS_TABLE_NAME,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())}) > 0;
         database.close();
         return result;
     }

@@ -63,7 +63,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         setContentView(R.layout.activity_home);
         initUI();
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerAdapter        = new UsersRecyclerAdapter(this,mCountries,mUsers);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -86,6 +85,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mFilterLayout           = (LinearLayout)    findViewById(R.id.search_bar);
         mTitleTxt               = (TextView)        findViewById(R.id.title);
         mGenderDialog           = new GenderDialog(this);
+        mRecyclerAdapter        = new UsersRecyclerAdapter(this,mCountries,mUsers);
     }
 
     private void setListeners()
@@ -265,11 +265,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         onPause();
     }
 
-    private void setTitle()
-    {
-        mTitleTxt.setText(getString(R.string.contacts));
-    }
-
     @Override
     public void onBackStackChanged() {
         if (getIntent() != null && getIntent().hasExtra(BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(BUNDLE_USER_KEY))   // listener for backstack changing, in case there is intent with user and country for update, updating user and remove intent
@@ -282,7 +277,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 updateUser(user,country,getIntent().getExtras().getInt(BUNDLE_POSITION_KEY));
             getIntent().removeExtra(BUNDLE_COUNTRY_KEY);
             getIntent().removeExtra(BUNDLE_USER_KEY);
-            setTitle();
+            mTitleTxt.setText(getString(R.string.contacts));
         }
         else if(getIntent().getExtras() != null && getIntent().hasExtra(FILTER_COUNTRY_KEY))
         {

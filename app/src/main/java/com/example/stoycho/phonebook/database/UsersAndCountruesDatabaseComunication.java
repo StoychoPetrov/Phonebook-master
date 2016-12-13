@@ -55,9 +55,9 @@ public class UsersAndCountruesDatabaseComunication extends Database {
         else if(phone != null)
             query += " WHERE users." + COLUMN_PHONE_NUMBER + " = " + phone;
 
-        List<User> users        = new ArrayList<>();
+        List<User>     users    = new ArrayList<>();
         SQLiteDatabase database = getWritableDatabase();
-        Cursor cursor           = database.rawQuery(query, null);
+        Cursor         cursor   = database.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
                 User user = new User();
@@ -89,5 +89,4 @@ public class UsersAndCountruesDatabaseComunication extends Database {
             instance = new UsersAndCountruesDatabaseComunication(context);
         return instance;
     }
-
 }

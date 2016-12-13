@@ -30,6 +30,7 @@ public class InformationDialog extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.information_dialog);
+
         TextView firstNameTxt      = (TextView) findViewById(R.id.first_name);
         TextView lastNameTxt       = (TextView) findViewById(R.id.last_name);
         TextView countryTxt        = (TextView) findViewById(R.id.country);

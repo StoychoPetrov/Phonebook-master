@@ -72,10 +72,10 @@ public class CountriesFragment extends Fragment implements TextWatcher,View.OnCl
 
     private void initUI(View root)
     {
-        mSearchEdb                      = (EditText)root.findViewById(R.id.search);
-        mCountriesRecycler              = (RecyclerView) root.findViewById(R.id.countriesRecycler);
-        mSearchTxt                      = (TextView) root.findViewById(R.id.all);
-        mDividerView                        = root.findViewById(R.id.divider);
+        mSearchEdb                      = (EditText)        root.findViewById(R.id.search);
+        mCountriesRecycler              = (RecyclerView)    root.findViewById(R.id.countriesRecycler);
+        mSearchTxt                      = (TextView)        root.findViewById(R.id.all);
+        mDividerView                    =                   root.findViewById(R.id.divider);
         mCountriesDatabaseCommunication = CountriesDatabaseCommunication.getInstance(getActivity());
     }
 
