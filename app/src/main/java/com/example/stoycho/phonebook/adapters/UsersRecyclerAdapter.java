@@ -23,26 +23,26 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
 
     private Context             mContext;
     private List<User>          mUsers;
-    private List<Country>       mCountries;
     private OnRecyclerItemClick mItemClickListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView    mUserNameTxt;
-        private TextView    mUserPhoneTxt;
         private ImageButton mEditButton;
         private ImageButton mDeleteButton;
+        private ImageButton mCallButton;
 
         private ViewHolder(View itemView) {
             super(itemView);
             mUserNameTxt    = (TextView)    itemView.findViewById(R.id.user_name);
-            mUserPhoneTxt   = (TextView)    itemView.findViewById(R.id.user_phone);
             mEditButton     = (ImageButton) itemView.findViewById(R.id.edit);
             mDeleteButton   = (ImageButton) itemView.findViewById(R.id.delete);
+            mCallButton     = (ImageButton) itemView.findViewById(R.id.call_button);
 
             itemView.setOnClickListener(this);
             mEditButton.setOnClickListener(this);
             mDeleteButton.setOnClickListener(this);
+            mCallButton.setOnClickListener(this);
         }
 
         @Override
@@ -52,9 +52,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         }
     }
 
-    public UsersRecyclerAdapter(Context context,List<Country> countries, List<User> users) {
+    public UsersRecyclerAdapter(Context context, List<User> users) {
         mContext    = context;
-        mCountries  = countries;
         mUsers      = users;
     }
 
@@ -68,12 +67,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         User    user    = mUsers.get(position);
-        Country country = mCountries.get(position);
-
-        String phoneNumber = mContext.getString(R.string.plus) + country.getCallingCode() + user.getPhoneNumber();
-
         holder.mUserNameTxt.setText(user.getFirstName());
-        holder.mUserPhoneTxt.setText(phoneNumber);
     }
 
     @Override
@@ -84,7 +78,6 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     public void setUsersAndCountries(List<User> users, List<Country> countries)
     {
         mUsers      = users;
-        mCountries  = countries;
     }
 
     public void setOnItemClickListener(OnRecyclerItemClick itemClickListener)

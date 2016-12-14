@@ -51,6 +51,11 @@
     <!-- Countries fragment -->
     <string name="search">Search</string>
     <string name="countries_api">https://restcountries.eu/rest/v1/all</string>
+    <string name="left_scope">(</string>                <!-- Left scope about calling code -->
+    <string name="calling_code_plus">+</string>         <!-- Plus about calling code -->
+    <string name="right_scope">)</string>               <!-- Right scope about calling code -->
+
+    <string name="permission_denied_phone_call">If you want to call, you have to grant the permission !</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -1,5 +1,6 @@
 package com.example.stoycho.phonebook.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class CountriesRecyclerAdapter extends RecyclerView.Adapter<CountriesRecyclerAdapter.ViewHolder> {
 
+    private Context             mContext;
     private List<Country>       mCountries;
     private OnRecyclerItemClick mOnItemClickListener;
 
@@ -40,9 +42,10 @@ public class CountriesRecyclerAdapter extends RecyclerView.Adapter<CountriesRecy
         }
     }
 
-    public CountriesRecyclerAdapter(List<Country> countries)
+    public CountriesRecyclerAdapter(Context context,List<Country> countries)
     {
-        mCountries = countries;
+        mContext    = context;
+        mCountries  = countries;
     }
 
     @Override
@@ -54,7 +57,13 @@ public class CountriesRecyclerAdapter extends RecyclerView.Adapter<CountriesRecy
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mCountryNameTxt.setText(mCountries.get(position).getCountryName());
-        holder.mCallingCodeTxt.setText(mCountries.get(position).getCallingCode());
+        String callingNumber = mCountries.get(position).getCallingCode();
+
+        if(callingNumber != null && !callingNumber.equals("")) {
+            String callingCode = mContext.getString(R.string.left_scope) + mContext.getString(R.string.calling_code_plus) + callingNumber
+                    + mCountries.get(position).getCallingCode() + mContext.getString(R.string.right_scope);
+            holder.mCallingCodeTxt.setText(callingCode);
+        }
     }
 
     @Override

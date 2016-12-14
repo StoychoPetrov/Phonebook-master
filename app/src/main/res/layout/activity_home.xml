@@ -15,14 +15,31 @@
         android:background="@color/colorPrimary">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/title"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/filter_button"
+            android:layout_toStartOf="@id/filter_button"
             android:textSize="25sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/contacts"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/filter_button"
+            android:src="@android:drawable/ic_menu_search"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:layout_centerVertical="true"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:contentDescription="@null"/>
 
     </RelativeLayout>
 
@@ -32,118 +49,133 @@
         android:layout_height="match_parent"
         android:id="@+id/replace_layout"
         android:layout_below="@+id/bar"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:paddingTop="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-        <!-- Layout for filter which is visible when there are more than one contact -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_layout"
             android:orientation="vertical"
-            android:id="@+id/search_bar"
-            android:background="@drawable/edittext_drawable"
-            android:layout_margin="20dp"
-            android:visibility="gone">
-            <!-- Layout about filter by country -->
-           <RelativeLayout
-               android:layout_width="match_parent"
-               android:layout_height="0dp"
-               android:id="@+id/select_country"
-               android:layout_weight="1">
+            android:visibility="visible">
 
-               <TextView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:id="@+id/country"
-                   android:text="@string/country"
-                   android:paddingLeft="10dp"
-                   android:paddingRight="10dp"
-                   android:layout_centerVertical="true"
-                   android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/gender_txt"
+                android:text="@string/info_gender"
+                android:textSize="17sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"/>
 
-               <TextView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:id="@+id/filter_country"
-                   android:text="@string/all"
-                   android:layout_toRightOf="@+id/country"
-                   android:layout_toEndOf="@+id/country"
-                   android:layout_centerVertical="true"
-                   android:paddingLeft="10dp"
-                   android:paddingRight="10dp"
-                   android:textSize="20sp"/>
-
-           </RelativeLayout>
-
-            <View
+            <!-- Radio group about filter by gender -->
+            <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/gender_radio"
+                android:layout_below="@+id/gender_txt"
+                android:layout_toRightOf="@+id/gender_txt"
+                android:layout_toEndOf="@id/gender_txt"
+                android:checkedButton="@+id/all"
+                android:visibility="visible">
 
-            <!-- Layout about filter by gender -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:id="@+id/select_gender"
-                android:layout_weight="1">
-
-                <TextView
+                <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/gender"
-                    android:text="@string/gender"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:layout_centerVertical="true"
-                    android:textSize="20sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/filter_gender"
+                    android:id="@+id/all"
                     android:text="@string/all"
-                    android:layout_toRightOf="@+id/gender"
-                    android:layout_toEndOf="@+id/gender"
-                    android:layout_centerVertical="true"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/male"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/female"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"/>
+
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/gender_radio"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/info_country"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:textColor="@android:color/black"
+                    android:padding="10dp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/country_editbox"
+                    android:textSize="15sp"
+                    android:text="@string/all"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:textSize="20sp"/>
+                    android:layout_marginRight="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:focusable="false"
+                    android:hint="@string/country"/>
 
-            </RelativeLayout>
+            </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+        </RelativeLayout>
 
-        </LinearLayout>
-        <!-- Recycler view about contacts -->
-       <android.support.v7.widget.RecyclerView
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:scrollbars="vertical"
-           android:id="@+id/recycleView"
-           android:layout_below="@+id/search_bar" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/content_layout"
+            android:layout_below="@+id/filter_layout">
 
-        <!-- Button for add a new contact -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:background="@drawable/button_states"
-            android:gravity="center"
-            android:id="@+id/add_user"
-            android:layout_below="@+id/recycleView"
-            android:layout_centerHorizontal="true"
-            android:text="@string/new_contact"
-            android:textStyle="bold"
-            android:textColor="@drawable/button_text_drawable"
-            android:drawableLeft="@android:drawable/ic_input_add"
-            android:drawableStart="@android:drawable/ic_input_add"
-            android:drawablePadding="5dp"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"/>
+            <!-- Recycler view about contacts -->
+           <android.support.v7.widget.RecyclerView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:scrollbars="vertical"
+               android:id="@+id/recycleView" />
+
+            <!-- Button for add a new contact -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/button_states"
+                android:gravity="center"
+                android:id="@+id/add_user"
+                android:layout_below="@+id/recycleView"
+                android:layout_centerHorizontal="true"
+                android:text="@string/new_contact"
+                android:textStyle="bold"
+                android:textColor="@drawable/button_text_drawable"
+                android:drawableLeft="@android:drawable/ic_input_add"
+                android:drawableStart="@android:drawable/ic_input_add"
+                android:drawablePadding="5dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

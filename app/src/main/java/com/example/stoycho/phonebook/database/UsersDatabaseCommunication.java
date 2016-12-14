@@ -53,14 +53,14 @@ public class UsersDatabaseCommunication extends Database {
     public boolean updateUserInDatabase(User user)
     {
         SQLiteDatabase database = getWritableDatabase();
-
         ContentValues values    = new ContentValues();
-        values.put(COLUMN_FIRST_NAME,    user.getFirstName());
-        values.put(COLUMN_LAST_NAME,     user.getLastName());
-        values.put(COLUMN_EMAIL,         user.getEmail());
-        values.put(COLUMN_PHONE_NUMBER,  user.getPhoneNumber());
-        values.put(COLUMN_GENDER,        user.getGender());
-        values.put(COLUMN_COUNTRY_ID_FK, user.getCountry());
+
+        values.put(COLUMN_FIRST_NAME,user.getFirstName());
+        values.put(COLUMN_LAST_NAME,user.getLastName());
+        values.put(COLUMN_EMAIL,user.getEmail());
+        values.put(COLUMN_PHONE_NUMBER,user.getPhoneNumber());
+        values.put(COLUMN_GENDER,user.getGender());
+        values.put(COLUMN_COUNTRY_ID_FK,user.getCountry());
 
         int result = database.update(USERS_TABLE_NAME,values,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())});
         database.close();
@@ -72,6 +72,7 @@ public class UsersDatabaseCommunication extends Database {
     {
         SQLiteDatabase  database = getWritableDatabase();
         boolean         result   = database.delete(USERS_TABLE_NAME,COLUMN_USER_ID + "=?",new String[]{String.valueOf(user.getId())}) > 0;
+
         database.close();
         return result;
     }

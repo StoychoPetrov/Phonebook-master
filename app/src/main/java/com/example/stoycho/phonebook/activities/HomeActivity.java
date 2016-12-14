@@ -1,15 +1,31 @@
 package com.example.stoycho.phonebook.activities;
 
+import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,34 +43,29 @@ import com.example.stoycho.phonebook.models.GenderDialog;
 import com.example.stoycho.phonebook.models.InformationDialog;
 import com.example.stoycho.phonebook.models.User;
 import com.example.stoycho.phonebook.tasks.DownloadData;
+import com.example.stoycho.phonebook.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends FragmentActivity implements View.OnClickListener,DialogInterface.OnDismissListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick {
+public class HomeActivity extends FragmentActivity implements View.OnClickListener,DialogInterface.OnDismissListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick,RadioGroup.OnCheckedChangeListener {
 
     private RecyclerView                mRecyclerView;
     private UsersRecyclerAdapter        mRecyclerAdapter;
     private List<Country>               mCountries;
     private List<User>                  mUsers;
-    private RelativeLayout              mSelectCountryLayout;
-    private RelativeLayout              mSelectGenderLayout;
     private TextView                    mNewContactTxt;
-    private TextView                    mFilterCountryTxt;
-    private TextView                    mFilterGenderTxt;
     private TextView                    mTitleTxt;
+    private EditText                    mCountryEdb;
     private GenderDialog                mGenderDialog;
     private Country                     mSelectedFilterCountry;
-    private LinearLayout                mFilterLayout;
+    private RelativeLayout              mFilterLayout;
+    private RelativeLayout              mContentLayout;
+    private ImageButton                 mFilterButton;
+    private RadioGroup                  mGenderRadioGroup;
 
-    private final static String ALL_COUNTRIES_ARE_SELECTED  = "all_selected";
-    private final static String BUNDLE_USER_KEY             = "user";
-    private final static String BUNDLE_COUNTRY_KEY          = "country";
-    private final static String REFRESH_USERS_KEY           =  "refresh_users";
-    private final static String UPDATE_USER                 = "update_user";
-    private final static String FILTER_COUNTRY_KEY          = "filter_country";
-    private final static String BUNDLE_POSITION_KEY         = "position";
-    public  final static String REGISTRATION_BACKSTACK_NAME = "registration";
+    private final static String ALL_COUNTRIES_ARE_SELECTED              = "all_selected";
+    private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 1;
 
 
     @Override
@@ -71,48 +82,72 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         setListeners();
         loadCountries();
         loadUsers();
+
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+        checkPermissions();
+
+        mFilterLayout.measure(0,0);
+        mFilterLayout.setTranslationY(-mFilterLayout.getMeasuredHeight());
+        mContentLayout.setTranslationY(-mFilterLayout.getMeasuredHeight());
     }
 
     private void initUI()
     {
         mNewContactTxt          = (TextView)        findViewById(R.id.add_user);
         mRecyclerView           = (RecyclerView)    findViewById(R.id.recycleView);
-        mSelectCountryLayout    = (RelativeLayout)  findViewById(R.id.select_country);
-        mSelectGenderLayout     = (RelativeLayout)  findViewById(R.id.select_gender);
-        mFilterCountryTxt       = (TextView)        findViewById(R.id.filter_country);
-        mFilterGenderTxt        = (TextView)        findViewById(R.id.filter_gender);
-        mFilterLayout           = (LinearLayout)    findViewById(R.id.search_bar);
+        mFilterLayout           = (RelativeLayout)  findViewById(R.id.filter_layout);
         mTitleTxt               = (TextView)        findViewById(R.id.title);
+        mFilterButton           = (ImageButton)     findViewById(R.id.filter_button);
+        mContentLayout          = (RelativeLayout)  findViewById(R.id.content_layout);
+        mCountryEdb             = (EditText)        findViewById(R.id.country_editbox);
+        mGenderRadioGroup      = (RadioGroup)      findViewById(R.id.gender_radio);
+
         mGenderDialog           = new GenderDialog(this);
-        mRecyclerAdapter        = new UsersRecyclerAdapter(this,mCountries,mUsers);
+        mRecyclerAdapter        = new UsersRecyclerAdapter(this,mUsers);
     }
 
     private void setListeners()
     {
         mNewContactTxt.setOnClickListener(this);
-        mSelectCountryLayout.setOnClickListener(this);
-        mSelectGenderLayout.setOnClickListener(this);
         mRecyclerAdapter.setOnItemClickListener(this);
         mGenderDialog.setOnDismissListener(this);
+        mFilterButton.setOnClickListener(this);
+        mCountryEdb.setOnClickListener(this);
+        mGenderRadioGroup.setOnCheckedChangeListener(this);
+    }
+
+    private void checkPermissions()
+    {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CALL_PHONE)) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CALL_PHONE},
+                        MY_PERMISSIONS_REQUEST_CALL_PHONE);
+            }
+        }
     }
 
     private void loadCountries()
     {
         String                               urlForGetCountries           = getString(R.string.countries_api);      // api for countries names
         final CountriesDatabaseCommunication countryDatabaseCommunication = CountriesDatabaseCommunication.getInstance(this);
-        DownloadData data = new DownloadData(urlForGetCountries)                                                        // make request to api for countries names
+        DownloadData                         data                         = new DownloadData(urlForGetCountries)         // make request to api for countries names
         {
             @Override
             protected void onPostExecute(String countriesJson) {
             super.onPostExecute(countriesJson);
                 List<Country> countries = Country.parceCountriesFromJson(countriesJson);
+
                 for(Country country : countries)
                 {
                    countryDatabaseCommunication.saveInDatabase(country);
                 }
             }
         };
+
         if(countryDatabaseCommunication.getCountOfCountries() == 0)
             data.execute();
     }
@@ -121,10 +156,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     {
         mCountries      = new ArrayList<>();
         mUsers          = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null);  // make query for all users with their countries from Users table and Countries table
+
         mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
         mRecyclerAdapter.notifyDataSetChanged();
+
         if(mUsers.size() > 0)
-            mFilterLayout.setVisibility(View.VISIBLE);
+            mFilterButton.setVisibility(View.VISIBLE);
+        else
+            mFilterButton.setVisibility(View.GONE);
     }
 
     private void refreshUsers(User user,Country country)
@@ -147,30 +186,57 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 onAddUser();
                 mTitleTxt.setText(getString(R.string.registration));
                 break;
-            case R.id.select_country:
+            case R.id.filter_button:
+                if(mFilterLayout.getY() <= 0.0)
+                    startFilterAnimVisible();
+                else
+                    startFilterAnimGone();
+                break;
+            case R.id.country_editbox:
                 onSelectCountry();
                 mTitleTxt.setText(getString(R.string.countries));
                 break;
-            case R.id.select_gender:
-                mGenderDialog.show();
-                break;
         }
+    }
+
+    private void startFilterAnimVisible()
+    {
+        mFilterLayout.setAlpha(0.0f);
+        mFilterLayout.animate()
+                .translationY(0).setDuration(500)
+                .alpha(1.0f);
+
+        mContentLayout.animate()
+                .translationY(0).setDuration(500);
+    }
+
+    private void startFilterAnimGone()
+    {
+        float density = getResources().getDisplayMetrics().density;
+        mFilterLayout.animate()
+                .translationY(-mFilterLayout.getHeight()).setDuration(500)
+                .alpha(0.0f);
+
+        mContentLayout.animate()
+                .translationY(-mFilterLayout.getHeight()).setDuration(500);
     }
 
     private void onSelectCountry()                                                      //start CountriesFragment
     {
         CountriesFragment countriesFragment = new CountriesFragment();
-        Bundle bundle = new Bundle();
+        Bundle            bundle            = new Bundle();
+
         bundle.putBoolean(ALL_COUNTRIES_ARE_SELECTED,true);
         countriesFragment.setArguments(bundle);
+
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
                 .add(R.id.replace_layout,countriesFragment).addToBackStack(null).commit();
     }
 
     private void onAddUser()                                                           //start RegisterFragment
     {
-        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),RegistrationFragment.REGISTRATION_FRAGMENT_TAG)
-                .addToBackStack(REGISTRATION_BACKSTACK_NAME).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),Constants.REGISTRATION_FRAGMENT_TAG)
+                .addToBackStack(Constants.REGISTRATION_BACKSTACK_NAME).commit();
     }
 
     private void updateUser(User user,Country country,int position)                     //update user in ListView
@@ -184,30 +250,27 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     {
         mSelectedFilterCountry  = country;
         mCountries              = new ArrayList<>();
-        String gender           = mFilterGenderTxt.getText().toString();
-        mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,country.getCountryName() != null ? country.getId():-1, !gender.equals("All") ? gender : null,null);
 
-        if(country.getCountryName() == null)
-            mFilterCountryTxt.setText(getString(R.string.all));
+        int checkedButtonId     =                   mGenderRadioGroup.getCheckedRadioButtonId();
+        String gender           = ((RadioButton)    mGenderRadioGroup.findViewById(checkedButtonId)).getText().toString();
+
+        mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,country.getCountryName() != null ? country.getId():-1, !gender.equals(getString(R.string.all)) ? gender : null,null);
+
+        if(country.getCountryName() == null) {
+            mCountryEdb.setText(getString(R.string.all));
+            mSelectedFilterCountry = null;
+        }
         else
-            mFilterCountryTxt.setText(country.getCountryName());
+            mCountryEdb.setText(country.getCountryName());
 
-       mRecyclerAdapter.notifyDataSetChanged();
+        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
+        mRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         if(((GenderDialog)dialog).getGender() != null) {
-            mFilterGenderTxt.setText(((GenderDialog) dialog).getGender());
-            mCountries = new ArrayList<>();
-            String gender = mFilterGenderTxt.getText().toString();
-            int countryId ;
-            if(mSelectedFilterCountry != null)
-                countryId = mSelectedFilterCountry.getId();
-            else
-                countryId = -1;
-            mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,!gender.equals("All") ? gender : null,null);
-            mRecyclerAdapter.notifyDataSetChanged();
+
         }
     }
 
@@ -215,6 +278,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     public void onBackPressed()
     {
         super.onBackPressed();
+
         if(getSupportFragmentManager().getBackStackEntryCount() == 0)
             mTitleTxt.setText(getString(R.string.contacts));
     }
@@ -242,8 +306,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             mUsers.remove(position);
             mCountries.remove(position);
             mRecyclerAdapter.notifyDataSetChanged();
+
             if(mUsers.size() == 0)
                 mFilterLayout.setVisibility(View.GONE);
+
             Toast.makeText(this, getString(R.string.successDelete), Toast.LENGTH_SHORT).show();
         }
         else
@@ -252,36 +318,43 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     private void onEdit(int position)                                            //start RegistrationFragment for editing user information
     {
-        RegistrationFragment registrationFragment = new RegistrationFragment();
-        Bundle bundle = new Bundle();
-        User user = mUsers.get(position);
-        Country country = mCountries.get(position);
-        bundle.putParcelable("country",country);
-        bundle.putParcelable("user",user);
+        RegistrationFragment    registrationFragment    = new RegistrationFragment();
+        Bundle                  bundle                  = new Bundle();
+        User                    user                    = mUsers.get(position);
+        Country                 country                 = mCountries.get(position);
+
+        bundle.putParcelable(Constants.BUNDLE_COUNTRY_KEY,country);
+        bundle.putParcelable(Constants.BUNDLE_USER_KEY,user);
         registrationFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,registrationFragment,RegistrationFragment.REGISTRATION_FRAGMENT_TAG)
-                .addToBackStack(REGISTRATION_BACKSTACK_NAME).commit();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,registrationFragment,Constants.REGISTRATION_FRAGMENT_TAG)
+                .addToBackStack(Constants.REGISTRATION_BACKSTACK_NAME).commit();
+
         mTitleTxt.setText(getString(R.string.editContact));
         onPause();
     }
 
     @Override
     public void onBackStackChanged() {
-        if (getIntent() != null && getIntent().hasExtra(BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(BUNDLE_USER_KEY))   // listener for backstack changing, in case there is intent with user and country for update, updating user and remove intent
+        if (getIntent() != null && getIntent().hasExtra(Constants.BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(Constants.BUNDLE_USER_KEY))   // listener for backstack changing, in case there is intent with user and country for update, updating user and remove intent
         {
-            User    user    = getIntent().getExtras().getParcelable(BUNDLE_USER_KEY);
-            Country country = getIntent().getExtras().getParcelable(BUNDLE_COUNTRY_KEY);
-            if(getIntent().hasExtra(REFRESH_USERS_KEY))
+            User    user    = getIntent().getExtras().getParcelable(Constants.BUNDLE_USER_KEY);
+            Country country = getIntent().getExtras().getParcelable(Constants.BUNDLE_COUNTRY_KEY);
+
+            if(getIntent().hasExtra(Constants.INTENT_REFRESH_USERS_KEY))
                 refreshUsers(user,country);
-            else if(getIntent().hasExtra(UPDATE_USER))
-                updateUser(user,country,getIntent().getExtras().getInt(BUNDLE_POSITION_KEY));
-            getIntent().removeExtra(BUNDLE_COUNTRY_KEY);
-            getIntent().removeExtra(BUNDLE_USER_KEY);
+            else if(getIntent().hasExtra(Constants.INTENT_UPDATE_USER_KEY))
+                updateUser(user,country,getIntent().getExtras().getInt(Constants.BUNDLE_POSITION_KEY));
+
+            getIntent().removeExtra(Constants.BUNDLE_COUNTRY_KEY);
+            getIntent().removeExtra(Constants.BUNDLE_USER_KEY);
+
             mTitleTxt.setText(getString(R.string.contacts));
         }
-        else if(getIntent().getExtras() != null && getIntent().hasExtra(FILTER_COUNTRY_KEY))
+        else if(getIntent().getExtras() != null && getIntent().hasExtra(Constants.INTENT_FILTER_COUNTRY_KEY))
         {
-            setFilterCountry((Country) getIntent().getParcelableExtra(FILTER_COUNTRY_KEY));
+            setFilterCountry((Country) getIntent().getParcelableExtra(Constants.INTENT_FILTER_COUNTRY_KEY));
+            getIntent().removeExtra(Constants.INTENT_FILTER_COUNTRY_KEY);
         }
     }
 
@@ -296,10 +369,58 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.edit:
                 onEdit(position);
                 break;
+            case R.id.call_button:
+                String phoneNumber = getString(R.string.plus) + mCountries.get(position).getCallingCode() +  mUsers.get(position).getPhoneNumber();
+                callToNumber(phoneNumber);
+                break;
             case R.id.user_item:
                 InformationDialog dialog = new InformationDialog(this,mCountries.get(position),mUsers.get(position));
                 dialog.show();
                 break;
         }
+    }
+
+    private void callToNumber(String number)
+    {
+        if(number != null && !number.equals("")) {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse(number));
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CALL_PHONE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                startActivity(callIntent);
+            } else
+                checkPermissions();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length == 0
+                        || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, R.string.permission_denied_phone_call, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int checkedButtonId) {
+        RadioButton checkedButton = (RadioButton) radioGroup.findViewById(checkedButtonId);
+        mCountries      = new ArrayList<>();
+        String gender   = checkedButton.getText().toString();
+        int countryId = Constants.INVALID_ROW_INDEX;
+
+        if(mSelectedFilterCountry != null)
+            countryId = mSelectedFilterCountry.getId();
+
+        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,!gender.equals(getString(R.string.all)) ? gender : null,null);
+        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
+        mRecyclerAdapter.notifyDataSetChanged();
     }
 }

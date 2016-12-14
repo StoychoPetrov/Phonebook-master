@@ -21,6 +21,7 @@ import com.example.stoycho.phonebook.database.UsersAndCountruesDatabaseComunicat
 import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.models.Country;
 import com.example.stoycho.phonebook.models.User;
+import com.example.stoycho.phonebook.utils.Constants;
 import com.example.stoycho.phonebook.utils.Validations;
 
 import java.util.ArrayList;
@@ -42,13 +43,6 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private boolean     mHasEmailError;
     private boolean     mHasPhoneError;
 
-    private final static String BUNDLE_USER_KEY             = "user";
-    private final static String BUNDLE_COUNTRY_KEY          = "country";
-    public  final static String REGISTRATION_FRAGMENT_TAG   = "registerFragment";
-    private final static String REFRESH_USERS               = "refresh_users";
-    private final static String UPDATE_USER                 = "update_user";
-    private final static String BUNDLE_POSITION_KEY         = "position";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +54,8 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         View root = inflater.inflate(R.layout.fragment_registration, container, false);
         initUI(root);
         setListeners();
-        if(getArguments() != null && getArguments().containsKey(BUNDLE_USER_KEY))
+
+        if(getArguments() != null && getArguments().containsKey(Constants.BUNDLE_USER_KEY))
             setInformations();
 
         return root;
@@ -90,19 +85,22 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private void setInformations()
     {
         if(getArguments() != null) {
-            Country country = getArguments().getParcelable(BUNDLE_COUNTRY_KEY);
-            User user       = getArguments().getParcelable(BUNDLE_USER_KEY);
-            if(user != null && country != null) {                               // if user is not null, set user information in boxes.
+
+            Country country = getArguments().getParcelable(Constants.BUNDLE_COUNTRY_KEY);
+            User user       = getArguments().getParcelable(Constants.BUNDLE_USER_KEY);
+
+            if(user != null && country != null) {                                               // if user is not null, set user information in boxes.
                 mFirstNameEdb.setText(user.getFirstName());
                 mLastNameEdb.setText(user.getLastName());
                 mEmailEdb.setText(user.getEmail());
                 mCountryEdb.setText(country.getCountryName());
                 mPhoneNumberEdb.setText(user.getPhoneNumber());
-                mPhoneCode = country.getCallingCode();
-                String code = getString(R.string.plus) + mPhoneCode + " ";
-                mCountryEdbId = country.getId();
+
+                mPhoneCode      = country.getCallingCode();
+                String code     = getString(R.string.plus) + mPhoneCode + " ";
+                mCountryEdbId   = country.getId();
                 mCallingCodeTxt.setText(code);
-                String gender = user.getGender();
+                String gender   = user.getGender();
                 if (gender != null && gender.equals(getString(R.string.male)))
                     mMaleRadioBtn.setChecked(true);
                 else
@@ -148,6 +146,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
                         }
                     });
+
             builder.create();
             builder.show();
         }
@@ -159,10 +158,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     {
         UsersDatabaseCommunication usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(getActivity());
 
-        User user = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString()
-                ,mPhoneNumberEdb.getText().toString(),mMaleRadioBtn.isChecked() ? getString(R.string.male):getString(R.string.female));
-        Country country = new Country(mCountryEdb.getText().toString(),mPhoneCode);
-        User parcedUser = getArguments().getParcelable(BUNDLE_USER_KEY);
+        User user                                               = new User(mFirstNameEdb.getText().toString(),mLastNameEdb.getText().toString(),mCountryEdbId,mEmailEdb.getText().toString(),
+                                                                        mPhoneNumberEdb.getText().toString(),mMaleRadioBtn.isChecked() ? getString(R.string.male):getString(R.string.female));
+        Country country                                         = new Country(mCountryEdb.getText().toString(),mPhoneCode);
+        User parcedUser                                         = getArguments().getParcelable(Constants.BUNDLE_USER_KEY);
         int userId;
 
         if(parcedUser != null)
@@ -173,10 +172,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         user.setId(userId);
         if(usersDatabaseCommunication.updateUserInDatabase(user)) {                                     // if status of update query is siccess ,it will pop the fragment and show message. In other case will show error message.
             Toast.makeText(getActivity(), R.string.successUpdate, Toast.LENGTH_SHORT).show();
-            getActivity().getIntent().putExtra(BUNDLE_USER_KEY,user);
-            getActivity().getIntent().putExtra(BUNDLE_COUNTRY_KEY,country);
-            getActivity().getIntent().putExtra(BUNDLE_POSITION_KEY,getArguments().getInt(BUNDLE_POSITION_KEY));
-            getActivity().getIntent().putExtra(UPDATE_USER,true);
+            getActivity().getIntent().putExtra(Constants.BUNDLE_USER_KEY,user);
+            getActivity().getIntent().putExtra(Constants.BUNDLE_COUNTRY_KEY,country);
+            getActivity().getIntent().putExtra(Constants.BUNDLE_POSITION_KEY,getArguments().getInt(Constants.BUNDLE_POSITION_KEY));
+            getActivity().getIntent().putExtra(Constants.INTENT_UPDATE_USER_KEY,true);
             getFragmentManager().popBackStack();
         }
         else
@@ -221,9 +220,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         if(id != -1) {
             user.setId((int) id);
             Toast.makeText(getActivity(), R.string.message_for_register, Toast.LENGTH_SHORT).show();
-            getActivity().getIntent().putExtra(BUNDLE_USER_KEY,user);
-            getActivity().getIntent().putExtra(BUNDLE_COUNTRY_KEY,country);
-            getActivity().getIntent().putExtra(REFRESH_USERS,true);
+            getActivity().getIntent().putExtra(Constants.BUNDLE_USER_KEY,user);
+            getActivity().getIntent().putExtra(Constants.BUNDLE_COUNTRY_KEY,country);
+            getActivity().getIntent().putExtra(Constants.INTENT_REFRESH_USERS_KEY,true);
             getFragmentManager().popBackStack();
         }
         else
@@ -233,12 +232,14 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private void onCountry()                                                                                            // User has selected country box and it will start CountryFragment
     {
         View viewFocus = getActivity().getCurrentFocus();
+
         if (viewFocus != null) {
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(viewFocus.getWindowToken(), 0);
         }
+
         getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
-                .add(R.id.replace_layout,new CountriesFragment(),CountriesFragment.COIUNTRIES_FRAGMENT_TAG).addToBackStack(CountriesFragment.COUNTRY_BACKSTACK_NAME).commit();
+                .add(R.id.replace_layout,new CountriesFragment(),Constants.COIUNTRIES_FRAGMENT_TAG).addToBackStack(Constants.COUNTRY_BACKSTACK_NAME).commit();
     }
 
     public void setSelectedCountry(Country country)

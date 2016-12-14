@@ -3,7 +3,6 @@ package com.example.stoycho.phonebook.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.stoycho.phonebook.models.Country;
@@ -16,7 +15,6 @@ import java.util.List;
  */
 
 public class CountriesDatabaseCommunication extends Database {
-
 
     /**************** Countries columns *************************/
     private final static String COLUMN_COUNTRY_ID       = "country_id";

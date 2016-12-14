@@ -41,8 +41,8 @@ public class GenderDialog extends Dialog implements View.OnClickListener{
     }
 
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    public void onClick(View clickedView) {
+        int id = clickedView.getId();
         switch (id)
         {
             case R.id.all:

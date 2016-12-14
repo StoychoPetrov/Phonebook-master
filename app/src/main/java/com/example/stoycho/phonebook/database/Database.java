@@ -1,7 +1,6 @@
 package com.example.stoycho.phonebook.database;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -45,17 +44,17 @@ public class Database extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_COUNTRIES);
-        db.execSQL(CREATE_USERS);
+    public void onCreate(SQLiteDatabase database) {
+        database.execSQL(CREATE_COUNTRIES);
+        database.execSQL(CREATE_USERS);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         if(oldVersion != newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + COUNTRIES_TABLE_NAME);
-            onCreate(db);
+            database.execSQL("DROP TABLE IF EXISTS " + USERS_TABLE_NAME);
+            database.execSQL("DROP TABLE IF EXISTS " + COUNTRIES_TABLE_NAME);
+            onCreate(database);
         }
     }
 }

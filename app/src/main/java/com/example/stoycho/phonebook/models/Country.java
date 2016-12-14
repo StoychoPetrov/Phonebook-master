@@ -84,7 +84,7 @@ public class Country implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeInt(mId);
         parcel.writeString(mCountryName);
         parcel.writeString(mCallingCode);
@@ -102,8 +102,8 @@ public class Country implements Parcelable {
         }
 
         @Override
-        public Object[] newArray(int i) {
-            return new Country[i];
+        public Object[] newArray(int size) {
+            return new Country[size];
         }
     };
 }
