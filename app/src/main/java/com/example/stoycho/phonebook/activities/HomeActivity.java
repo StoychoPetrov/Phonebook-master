@@ -97,6 +97,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         mFilterLayout.measure(0,0);
         RelativeLayout.LayoutParams filterLayoutParams = (RelativeLayout.LayoutParams) mFilterLayout.getLayoutParams();
+
         mFilterLayoutStartTopMargin     =   filterLayoutParams.topMargin;
         filterLayoutParams.topMargin    =   -mFilterLayout.getMeasuredHeight();
         mFilterLayout.setLayoutParams(filterLayoutParams);
@@ -344,10 +345,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             User    user    = getIntent().getExtras().getParcelable(Constants.BUNDLE_USER_KEY);
             Country country = getIntent().getExtras().getParcelable(Constants.BUNDLE_COUNTRY_KEY);
 
-            if(getIntent().hasExtra(Constants.INTENT_REFRESH_USERS_KEY))
-                refreshUsers(user,country);
-            else if(getIntent().hasExtra(Constants.INTENT_UPDATE_USER_KEY))
-                updateUser(user,country,getIntent().getExtras().getInt(Constants.BUNDLE_POSITION_KEY));
+            if(getIntent().hasExtra(Constants.INTENT_REFRESH_USERS_KEY)) {
+                refreshUsers(user, country);
+                getIntent().removeExtra(Constants.INTENT_REFRESH_USERS_KEY);
+            }
+            else if(getIntent().hasExtra(Constants.INTENT_UPDATE_USER_KEY)) {
+                updateUser(user, country, getIntent().getExtras().getInt(Constants.BUNDLE_POSITION_KEY));
+                getIntent().removeExtra(Constants.INTENT_UPDATE_USER_KEY);
+            }
 
             getIntent().removeExtra(Constants.BUNDLE_COUNTRY_KEY);
             getIntent().removeExtra(Constants.BUNDLE_USER_KEY);
