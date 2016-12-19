@@ -59,6 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/filter_layout"
+            android:layout_margin="10dp"
             android:orientation="vertical"
             android:visibility="visible">
 
@@ -147,6 +148,17 @@
             android:id="@+id/content_layout"
             android:layout_below="@+id/filter_layout">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/empty_txt"
+                android:layout_centerInParent="true"
+                android:text="@string/no_contacts"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:visibility="gone"/>
+
             <!-- Recycler view about contacts -->
            <android.support.v7.widget.RecyclerView
                android:layout_width="match_parent"
@@ -154,28 +166,19 @@
                android:scrollbars="vertical"
                android:id="@+id/recycleView" />
 
-            <!-- Button for add a new contact -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:background="@drawable/button_states"
-                android:gravity="center"
-                android:id="@+id/add_user"
-                android:layout_below="@+id/recycleView"
-                android:layout_centerHorizontal="true"
-                android:text="@string/new_contact"
-                android:textStyle="bold"
-                android:textColor="@drawable/button_text_drawable"
-                android:drawableLeft="@android:drawable/ic_input_add"
-                android:drawableStart="@android:drawable/ic_input_add"
-                android:drawablePadding="5dp"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"/>
-
         </RelativeLayout>
+
+        <!-- Button for add a new contact -->
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_user"
+            android:tint="@android:color/white"
+            android:src="@android:drawable/ic_input_add"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp"/>
 
     </RelativeLayout>
 
