@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         private ImageButton     mCallButton;
         private ImageButton     mInfoButton;
         private LinearLayout    mUsersButtonsLayput;
+        private View            mTopLine;
+        private View            mShadow;
 
         private ViewHolder(View itemView)  {
             super(itemView);
@@ -53,6 +56,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
             mCallButton             = (ImageButton) itemView.findViewById(R.id.call_button);
             mInfoButton             = (ImageButton) itemView.findViewById(R.id.info_button);
             mUsersButtonsLayput     = (LinearLayout)itemView.findViewById(R.id.user_buttons_layout);
+            mTopLine                =               itemView.findViewById(R.id.top_line);
+            mShadow                 =               itemView.findViewById(R.id.shadow);
 
 
             itemView.setOnClickListener(this);
@@ -88,19 +93,37 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         private void onItemClick()
         {
             float increaseHeight;
-            if(mUsersButtonsLayput.getHeight() == 0)
+
+            if(mUsersButtonsLayput.getHeight() == 0) {
                 increaseHeight = BUTTONS_LAYOUT_VISIBLE_HEIGHT * mContext.getResources().getDisplayMetrics().density;
-            else
+                mTopLine.setVisibility(View.VISIBLE);
+                mShadow.setVisibility(View.VISIBLE);
+                itemView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.select_user_item_background));
+            }
+            else {
                 increaseHeight = BUTTONS_LAYOUT_GONE_HEIGHT;
-            List<Animator> listAnimator      = new ArrayList<>();
+                mTopLine.setVisibility(View.GONE);
+                mShadow.setVisibility(View.GONE);
+                itemView.setBackgroundColor(ContextCompat.getColor(mContext,android.R.color.white));
+            }
+
+            List<Animator>      listAnimator            = new ArrayList<>();
             AnimatorSet         set                     = new AnimatorSet();
             ValueAnimator       animateClickedItem      = createAnimator(mUsersButtonsLayput,increaseHeight);
+
             listAnimator.add(animateClickedItem);
+
             for(int i = 0; i < getItemCount(); i++)
             {
                 if(i != getAdapterPosition()) {
                     View            item    =                   mRecyclerView.getChildAt(i);
                     LinearLayout    buttons = (LinearLayout)    item.findViewById(R.id.user_buttons_layout);
+                    View            topLine =                   item.findViewById(R.id.top_line);
+                    View            shadow  =                   item.findViewById(R.id.shadow);
+
+                    topLine.setVisibility(View.GONE);
+                    shadow.setVisibility(View.GONE);
+                    item.setBackgroundColor(ContextCompat.getColor(mContext,android.R.color.white));
 
                     if(buttons.getHeight() != BUTTONS_LAYOUT_GONE_HEIGHT)
                     {
@@ -109,6 +132,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                     }
                 }
             }
+
             set.playTogether(listAnimator);
             set.start();
         }

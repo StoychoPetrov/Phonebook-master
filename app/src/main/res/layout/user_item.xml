@@ -4,11 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/top_line"
+        android:background="@android:color/darker_gray"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/user_info"
         android:orientation="horizontal"
+        android:layout_below="@+id/top_line"
         android:paddingLeft="5dp"
         android:paddingRight="5dp">
 
@@ -62,7 +70,7 @@
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_menu_edit"
             android:contentDescription="@null"
-            android:layout_marginRight="3dp"/>
+            android:layout_marginRight="10dp"/>
 
         <!-- Button about deleting contact -->
         <ImageButton
@@ -72,16 +80,26 @@
             android:background="@android:color/transparent"
             android:contentDescription="@null"
             android:src="@android:drawable/ic_delete"
-            android:layout_marginLeft="3dp"/>
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/info_button"
             android:contentDescription="@null"
+            android:layout_marginLeft="10dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_menu_info_details"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/shadow"
+        android:layout_below="@+id/user_buttons_layout"
+        android:background="@drawable/shadow_drawable"
+        android:visibility="gone"/>
 
 </RelativeLayout>
