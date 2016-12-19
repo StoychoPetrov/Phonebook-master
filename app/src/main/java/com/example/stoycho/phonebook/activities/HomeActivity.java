@@ -422,7 +422,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         RadioButton checkedButton = (RadioButton) radioGroup.findViewById(checkedButtonId);
         mCountries      = new ArrayList<>();
         String gender   = checkedButton.getText().toString();
-        int countryId = Constants.INVALID_ROW_INDEX;
+        int countryId   = Constants.INVALID_ROW_INDEX;
 
         if(mSelectedFilterCountry != null)
             countryId = mSelectedFilterCountry.getId();
@@ -435,12 +435,13 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        final int touchPositionY = (int) motionEvent.getRawY();
+        final int touchPositionY                    = (int) motionEvent.getRawY();
 
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
+        RelativeLayout.LayoutParams layoutParams    = (RelativeLayout.LayoutParams) view
                 .getLayoutParams();
 
-        int topMarginView = layoutParams.topMargin;
+        int topMarginView                           = layoutParams.topMargin;
+
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK)
         {
             case MotionEvent.ACTION_DOWN:
@@ -449,7 +450,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(touchPositionY - mFirstTouchPositionY < topMarginView) {
-                    layoutParams.topMargin = touchPositionY - mFirstTouchPositionY;
+                    layoutParams.topMargin  = touchPositionY - mFirstTouchPositionY;
                     mFilterCurrentTopMargin = touchPositionY - mFirstTouchPositionY;
                     view.setLayoutParams(layoutParams);
                 }
