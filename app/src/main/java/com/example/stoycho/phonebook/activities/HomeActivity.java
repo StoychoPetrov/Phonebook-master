@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -331,6 +332,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
         mRecyclerAdapter.notifyDataSetChanged();
+
+        checkSizeOfContactsAndSetMessage();
     }
 
     @Override
@@ -489,7 +492,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
                 // If request is cancelled, the result arrays are empty.
@@ -514,6 +517,15 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,!gender.equals(getString(R.string.all)) ? gender : null,null);
         mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
         mRecyclerAdapter.notifyDataSetChanged();
+        checkSizeOfContactsAndSetMessage();
+    }
+
+    private void checkSizeOfContactsAndSetMessage()
+    {
+        if(mUsers.size() == 0)
+            mEmptyTxt.setVisibility(View.VISIBLE);
+        else
+            mEmptyTxt.setVisibility(View.GONE);
     }
 
     @Override
