@@ -71,8 +71,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private Country                     mSelectedFilterCountry;
     private RelativeLayout              mFilterLayout;
     private ImageButton                 mFilterButton;
+    private ImageButton                 mSearchButton;
     private RadioGroup                  mGenderRadioGroup;
 
+    private String                      mFilterGender;
     private int                         mFirstTouchPositionY;
     private int                         mFilterCurrentTopMargin;
     private int                         mFilterLayoutStartTopMargin;
@@ -116,6 +118,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mTitleTxt               = (TextView)                findViewById(R.id.title);
         mEmptyTxt               = (TextView)                findViewById(R.id.empty_txt);
         mFilterButton           = (ImageButton)             findViewById(R.id.filter_button);
+        mSearchButton           = (ImageButton)             findViewById(R.id.search_button);
         mCountryEdb             = (EditText)                findViewById(R.id.country_editbox);
         mSearchCountryEdb       = (EditText)                findViewById(R.id.search);
         mGenderRadioGroup       = (RadioGroup)              findViewById(R.id.gender_radio);
@@ -132,6 +135,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mGenderRadioGroup.setOnCheckedChangeListener(this);
         mFilterLayout.setOnTouchListener(this);
         mSearchCountryEdb.addTextChangedListener(this);
+        mSearchButton.setOnClickListener(this);
     }
 
     private void animateFilter(float topMargin, float increaseHeight)
@@ -145,6 +149,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 mFilterLayout.requestLayout();
             }
         });
+
         valueAnimator.start();
     }
 
@@ -204,7 +209,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                visibleView.setVisibility(View.GONE);
+                visibleView.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -239,7 +244,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void loadUsers()
     {
         mCountries      = new ArrayList<>();
-        mUsers          = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null);  // make query for all users with their countries from Users table and Countries table
+        mUsers          = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null,mSearchCountryEdb.getText().toString());  // make query for all users with their countries from Users table and Countries table
 
         mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
         mRecyclerAdapter.notifyDataSetChanged();
@@ -285,6 +290,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.country_editbox:
                 onSelectCountry();
                 break;
+            case R.id.search_button:
+                if(mSearchCountryEdb.getVisibility() == View.INVISIBLE) {
+                    replaceElementsWithFade(mTitleTxt, mSearchCountryEdb);
+                    mSearchCountryEdb.requestFocus();
+                }
+                else
+                    replaceElementsWithFade(mSearchCountryEdb,mTitleTxt);
+                break;
         }
     }
 
@@ -321,7 +334,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         int checkedButtonId     =                   mGenderRadioGroup.getCheckedRadioButtonId();
         String gender           = ((RadioButton)    mGenderRadioGroup.findViewById(checkedButtonId)).getText().toString();
 
-        mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,country.getCountryName() != null ? country.getId():-1, !gender.equals(getString(R.string.all)) ? gender : null,null);
+        mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,country.getCountryName() != null ? country.getId():-1, !gender.equals(getString(R.string.all)) ? gender : null,null,mSearchCountryEdb.getText().toString());
 
         if(country.getCountryName() == null) {
             mCountryEdb.setText(getString(R.string.all));
@@ -479,7 +492,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     {
         if(number != null && !number.equals("")) {
 
-            Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+            Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse(getString(R.string.tel) + number));
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.CALL_PHONE)
@@ -508,13 +521,16 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     public void onCheckedChanged(RadioGroup radioGroup, int checkedButtonId) {
         RadioButton checkedButton = (RadioButton) radioGroup.findViewById(checkedButtonId);
         mCountries      = new ArrayList<>();
-        String gender   = checkedButton.getText().toString();
+        mFilterGender   = checkedButton.getText().toString();
         int countryId   = Constants.INVALID_ROW_INDEX;
 
         if(mSelectedFilterCountry != null)
             countryId = mSelectedFilterCountry.getId();
 
-        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,!gender.equals(getString(R.string.all)) ? gender : null,null);
+        if(mFilterGender.equals(getString(R.string.all)))
+            mFilterGender          = null;
+
+        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,mFilterGender,null,mSearchCountryEdb.getText().toString());
         mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
         mRecyclerAdapter.notifyDataSetChanged();
         checkSizeOfContactsAndSetMessage();
@@ -579,6 +595,20 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         if(countriesFragment != null && countriesFragment.isVisible())
         {
             countriesFragment.searchCountries(mSearchCountryEdb.getText().toString());
+        }
+        else if(getSupportFragmentManager().getBackStackEntryCount() == 0)
+        {
+            int filterCountryId;
+            if(mSelectedFilterCountry != null && mSelectedFilterCountry.getCountryName() != null && !mSelectedFilterCountry.getCountryName().equals(""))
+                filterCountryId = mSelectedFilterCountry.getId();
+            else
+                filterCountryId = Constants.INVALID_ROW_INDEX;
+
+            mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,filterCountryId,mFilterGender,null,mSearchCountryEdb.getText().toString());
+            mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
+            mRecyclerAdapter.notifyDataSetChanged();
+
+            checkSizeOfContactsAndSetMessage();
         }
     }
 }

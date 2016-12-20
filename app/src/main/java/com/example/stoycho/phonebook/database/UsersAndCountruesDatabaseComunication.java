@@ -41,19 +41,40 @@ public class UsersAndCountruesDatabaseComunication extends Database {
         super(context);
     }
 
-    public List<User> selectUsersAndTheirCountries(List<Country> countries, int countryId, String gender, String phone)
+    public List<User> selectUsersAndTheirCountries(List<Country> countries, int countryId, String gender, String phone,String filterByName)
     {
+
+        boolean hasWhereClause = false;
+
         String query = "SELECT * "
                 +  "FROM " + USERS_TABLE_NAME + " users " + "INNER JOIN " + COUNTRIES_TABLE_NAME + " countries "
                 +  "ON " + "users." + COLUMN_COUNTRY_ID_FK + " = countries." + COLUMN_COUNTRY_ID;
-        if(countryId >= 0 && gender == null)
+        if(countryId >= 0 && gender == null) {
             query += " WHERE users." + COLUMN_COUNTRY_ID_FK + " = " + countryId;
-        else if(countryId < 0 && gender != null)
+            hasWhereClause = true;
+        }
+        else if(countryId < 0 && gender != null) {
             query += " WHERE users." + COLUMN_GENDER + " = '" + gender + "'";
-        else if(countryId >=0 && gender != null)
+            hasWhereClause = true;
+        }
+        else if(countryId >=0 && gender != null) {
             query += " WHERE users." + COLUMN_COUNTRY_ID_FK + " = " + countryId + " AND users." + COLUMN_GENDER + " = '" + gender + "'";
-        else if(phone != null)
+            hasWhereClause = true;
+        }
+        else if(phone != null) {
             query += " WHERE users." + COLUMN_PHONE_NUMBER + " = " + phone;
+            hasWhereClause = true;
+        }
+
+        if(filterByName != null && !filterByName.equals("") && hasWhereClause)
+        {
+            query += " AND users." + COLUMN_FIRST_NAME + " LIKE '" + filterByName + "%'";
+        }
+        else if(filterByName != null && !filterByName.equals(""))
+        {
+            query += " WHERE users." + COLUMN_FIRST_NAME + " LIKE '" + filterByName + "%'";
+        }
+
 
         List<User>     users    = new ArrayList<>();
         SQLiteDatabase database = getWritableDatabase();

@@ -9,6 +9,7 @@
     <string name="countries">Countries</string>
     <string name="editContact">Edit contact</string>
     <string name="no_contacts">No contacts</string>
+    <string name="tel">tel:</string>
 
     <!-- Registration strings -->
     <string name="first_name">First name</string>

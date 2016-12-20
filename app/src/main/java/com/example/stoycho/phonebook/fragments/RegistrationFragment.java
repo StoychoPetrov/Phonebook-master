@@ -99,9 +99,15 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 mPhoneCode      = country.getCallingCode();
                 String code     = getString(R.string.plus) + mPhoneCode + " ";
                 mCountryEdbId   = country.getId();
-                mCallingCodeTxt.setText(code);
-                mCallingCodeTxt.setVisibility(View.VISIBLE);
+
+                if(mPhoneCode != null)
+                {
+                    mCallingCodeTxt.setText(code);
+                    mCallingCodeTxt.setVisibility(View.VISIBLE);
+                }
+
                 String gender   = user.getGender();
+
                 if (gender != null && gender.equals(getString(R.string.male)))
                     mMaleRadioBtn.setChecked(true);
                 else
@@ -188,7 +194,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         if(!mFirstNameEdb.getText().toString().equals("") && !mLastNameEdb.getText().toString().equals("") && !mCountryEdb.getText().toString().equals("")
                 && !mEmailEdb.getText().toString().equals("") && !mHasEmailError && !mHasPhoneError && (mMaleRadioBtn.isChecked() || mFemaleRadioBtn.isChecked()))
         {
-            List<User> users = UsersAndCountruesDatabaseComunication.getInstance(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString());
+            List<User> users = UsersAndCountruesDatabaseComunication.getInstance(getActivity()).selectUsersAndTheirCountries(new ArrayList<Country>(),-1,null,mPhoneNumberEdb.getText().toString(),null);
             if(users.size() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage(R.string.message_for_dialog)
@@ -249,7 +255,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mPhoneCode = country.getCallingCode();
         String code = getString(R.string.plus) + mPhoneCode + " ";
         mCallingCodeTxt.setVisibility(View.VISIBLE);
-        mCallingCodeTxt.setText(code);
+        if(mPhoneCode != null) {
+            mCallingCodeTxt.setText(code);
+            mCallingCodeTxt.setVisibility(View.GONE);
+        }
         mCountryEdbId = country.getId();
     }
 

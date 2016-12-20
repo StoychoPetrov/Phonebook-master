@@ -39,7 +39,12 @@ public class InformationDialog extends Dialog {
         TextView genderTxt         = (TextView) findViewById(R.id.gender);
 
         if(mUser != null) {
-            String phone = mContext.getString(R.string.plus) + mCountry.getCallingCode() + mUser.getPhoneNumber();
+
+            String phone;
+            if(mCountry.getCallingCode() == null)
+                phone   = mUser.getPhoneNumber();
+            else
+                phone   = mContext.getString(R.string.plus) + mCountry.getCallingCode() + mUser.getPhoneNumber();
 
             firstNameTxt.setText(mUser.getFirstName());
             lastNameTxt.setText(mUser.getLastName());
