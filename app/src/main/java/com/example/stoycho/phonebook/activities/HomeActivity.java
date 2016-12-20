@@ -19,8 +19,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -53,7 +56,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends FragmentActivity implements View.OnClickListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick,RadioGroup.OnCheckedChangeListener,View.OnTouchListener {
+public class HomeActivity extends FragmentActivity implements View.OnClickListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick,RadioGroup.OnCheckedChangeListener,View.OnTouchListener,TextWatcher {
 
     private RecyclerView                mRecyclerView;
     private UsersRecyclerAdapter        mRecyclerAdapter;
@@ -63,6 +66,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private TextView                    mTitleTxt;
     private TextView                    mEmptyTxt;
     private EditText                    mCountryEdb;
+    private EditText                    mSearchCountryEdb;
     private Country                     mSelectedFilterCountry;
     private RelativeLayout              mFilterLayout;
     private ImageButton                 mFilterButton;
@@ -71,10 +75,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private int                         mFirstTouchPositionY;
     private int                         mFilterCurrentTopMargin;
     private int                         mFilterLayoutStartTopMargin;
+    private boolean                     mStartAnimation;
 
     private final static String ALL_COUNTRIES_ARE_SELECTED              = "all_selected";
     private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 1;
-
 
 
     @Override
@@ -112,6 +116,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mEmptyTxt               = (TextView)                findViewById(R.id.empty_txt);
         mFilterButton           = (ImageButton)             findViewById(R.id.filter_button);
         mCountryEdb             = (EditText)                findViewById(R.id.country_editbox);
+        mSearchCountryEdb       = (EditText)                findViewById(R.id.search);
         mGenderRadioGroup       = (RadioGroup)              findViewById(R.id.gender_radio);
 
         mRecyclerAdapter        = new UsersRecyclerAdapter(this,mRecyclerView,mUsers);
@@ -125,6 +130,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mCountryEdb.setOnClickListener(this);
         mGenderRadioGroup.setOnCheckedChangeListener(this);
         mFilterLayout.setOnTouchListener(this);
+        mSearchCountryEdb.addTextChangedListener(this);
     }
 
     private void animateFilter(float topMargin, float increaseHeight)
@@ -153,6 +159,58 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                         MY_PERMISSIONS_REQUEST_CALL_PHONE);
             }
         }
+    }
+
+    private void replaceElementsWithFade(final View visibleView, final View goneView)
+    {
+
+        AlphaAnimation fadeInAnimation      = new AlphaAnimation(0,1);
+        AlphaAnimation fadeOutAnimation     = new AlphaAnimation(1,0);
+
+        fadeOutAnimation.setDuration(getResources().getInteger(R.integer.fade_animation_duration));
+        fadeOutAnimation.setInterpolator(new LinearInterpolator());
+
+        fadeInAnimation.setDuration(getResources().getInteger(R.integer.fade_animation_duration));
+        fadeInAnimation.setInterpolator(new LinearInterpolator());
+        fadeInAnimation.setStartOffset(getResources().getInteger(R.integer.fade_animation_start_offset));
+
+        visibleView.startAnimation(fadeOutAnimation);
+        goneView.startAnimation(fadeInAnimation);
+
+        fadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                goneView.setVisibility(View.VISIBLE);
+                mStartAnimation = false;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                visibleView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     private void loadCountries()
@@ -225,7 +283,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 break;
             case R.id.country_editbox:
                 onSelectCountry();
-                mTitleTxt.setText(getString(R.string.countries));
                 break;
         }
     }
@@ -239,12 +296,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         countriesFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_down,0,0,R.anim.slide_up)
-                .add(R.id.replace_layout,countriesFragment).addToBackStack(null).commit();
+                .add(R.id.replace_layout,countriesFragment,Constants.COIUNTRIES_FRAGMENT_TAG).addToBackStack(Constants.COUNTRY_BACKSTACK_NAME).commit();
     }
 
     private void onAddUser()                                                           //start RegisterFragment
     {
-        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,new RegistrationFragment(),Constants.REGISTRATION_FRAGMENT_TAG)
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in,0,0,android.R.anim.fade_out).replace(R.id.replace_layout,new RegistrationFragment(),Constants.REGISTRATION_FRAGMENT_TAG)
                 .addToBackStack(Constants.REGISTRATION_BACKSTACK_NAME).commit();
     }
 
@@ -281,8 +338,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     {
         super.onBackPressed();
 
-        if(getSupportFragmentManager().getBackStackEntryCount() == 0)
+        if(getSupportFragmentManager().getBackStackEntryCount() == 0) {
             mTitleTxt.setText(getString(R.string.contacts));
+            mSearchCountryEdb.setText("");
+        }
     }
 
     private void deleteUserAlert(final int position)         //Show confirmation dialog for delete user.
@@ -331,7 +390,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         bundle.putParcelable(Constants.BUNDLE_USER_KEY,user);
         registrationFragment.setArguments(bundle);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.replace_layout,registrationFragment,Constants.REGISTRATION_FRAGMENT_TAG)
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in,0,0,android.R.anim.fade_out).replace(R.id.replace_layout,registrationFragment,Constants.REGISTRATION_FRAGMENT_TAG)
                 .addToBackStack(Constants.REGISTRATION_BACKSTACK_NAME).commit();
 
         mTitleTxt.setText(getString(R.string.editContact));
@@ -365,10 +424,30 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             getIntent().removeExtra(Constants.INTENT_FILTER_COUNTRY_KEY);
         }
 
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0)
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
             mNewContactButton.setVisibility(View.GONE);
-        else
+            mFilterButton.setVisibility(View.GONE);
+        }
+        else {
             mNewContactButton.setVisibility(View.VISIBLE);
+            mFilterButton.setVisibility(View.VISIBLE);
+        }
+
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0 && getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName() != null
+                && getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName().equals(Constants.COUNTRY_BACKSTACK_NAME) && !mStartAnimation)
+        {
+            mStartAnimation = true;
+            replaceElementsWithFade(mTitleTxt,mSearchCountryEdb);
+        }
+        else if(!mStartAnimation)
+        {
+            if(mSearchCountryEdb.getVisibility() == View.VISIBLE)
+                replaceElementsWithFade(mSearchCountryEdb,mTitleTxt);
+
+            mSearchCountryEdb.setText("");
+        }
     }
 
     @Override
@@ -471,5 +550,24 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         }
         view.invalidate();
         return true;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        CountriesFragment countriesFragment = (CountriesFragment) getSupportFragmentManager().findFragmentByTag(Constants.COIUNTRIES_FRAGMENT_TAG);
+        if(countriesFragment != null && countriesFragment.isVisible())
+        {
+            countriesFragment.searchCountries(mSearchCountryEdb.getText().toString());
+        }
     }
 }

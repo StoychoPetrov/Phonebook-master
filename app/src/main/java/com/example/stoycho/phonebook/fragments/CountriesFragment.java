@@ -27,9 +27,8 @@ import com.example.stoycho.phonebook.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CountriesFragment extends Fragment implements TextWatcher,View.OnClickListener,OnRecyclerItemClick {
+public class CountriesFragment extends Fragment implements View.OnClickListener,OnRecyclerItemClick {
 
-    private EditText                        mSearchEdb;
     private RecyclerView                    mCountriesRecycler;
     private CountriesRecyclerAdapter        mCountriesAdapter;
     private List<Country>                   mCountries;
@@ -66,7 +65,6 @@ public class CountriesFragment extends Fragment implements TextWatcher,View.OnCl
 
     private void initUI(View root)
     {
-        mSearchEdb                      = (EditText)        root.findViewById(R.id.search);
         mCountriesRecycler              = (RecyclerView)    root.findViewById(R.id.countriesRecycler);
         mSearchTxt                      = (TextView)        root.findViewById(R.id.all);
         mDividerView                    =                   root.findViewById(R.id.divider);
@@ -78,7 +76,6 @@ public class CountriesFragment extends Fragment implements TextWatcher,View.OnCl
 
     private void setListeners()
     {
-        mSearchEdb.addTextChangedListener(this);
         mSearchTxt.setOnClickListener(this);
         mCountriesAdapter.setOnItemClickListener(this);
     }
@@ -86,23 +83,6 @@ public class CountriesFragment extends Fragment implements TextWatcher,View.OnCl
     private void loadCountriesList()
     {
         mCountries = mCountriesDatabaseCommunication.selectAllCountriesFromDatabase(CountriesDatabaseCommunication.SELECT_ALL_COUNTRIES,null);
-        mCountriesAdapter.setCountries(mCountries);
-        mCountriesAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence input, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence input, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable input) {
-        mCountries = mCountriesDatabaseCommunication.selectAllCountriesFromDatabase(CountriesDatabaseCommunication.SELECT_SEARCH_PLACES,input.toString());
         mCountriesAdapter.setCountries(mCountries);
         mCountriesAdapter.notifyDataSetChanged();
     }
@@ -116,6 +96,13 @@ public class CountriesFragment extends Fragment implements TextWatcher,View.OnCl
                 selectAll();
                 break;
         }
+    }
+
+    public void searchCountries(String input)
+    {
+        mCountries = mCountriesDatabaseCommunication.selectAllCountriesFromDatabase(CountriesDatabaseCommunication.SELECT_SEARCH_PLACES,input);
+        mCountriesAdapter.setCountries(mCountries);
+        mCountriesAdapter.notifyDataSetChanged();
     }
 
     private void selectAll()

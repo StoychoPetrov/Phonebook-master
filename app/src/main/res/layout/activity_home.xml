@@ -26,7 +26,19 @@
             android:textColor="@android:color/white"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="@string/contacts"/>
+            android:text="@string/contacts" />
+
+        <!-- EditText about filter by country name -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/search"
+            android:hint="@string/search"
+            android:textColorHint="@android:color/darker_gray"
+            android:inputType="text"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:visibility="gone"/>
 
         <ImageButton
             android:layout_width="wrap_content"

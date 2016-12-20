@@ -60,8 +60,7 @@ public class CountriesRecyclerAdapter extends RecyclerView.Adapter<CountriesRecy
         String callingNumber = mCountries.get(position).getCallingCode();
 
         if(callingNumber != null && !callingNumber.equals("")) {
-            String callingCode = mContext.getString(R.string.left_scope) + mContext.getString(R.string.calling_code_plus) + callingNumber
-                    + mCountries.get(position).getCallingCode() + mContext.getString(R.string.right_scope);
+            String callingCode = mContext.getString(R.string.left_scope) + mContext.getString(R.string.calling_code_plus) + callingNumber + mContext.getString(R.string.right_scope);
             holder.mCallingCodeTxt.setText(callingCode);
         }
     }

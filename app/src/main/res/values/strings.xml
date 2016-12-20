@@ -29,6 +29,7 @@
     <string name="updateInfo">Are you sure that you want to edit the contact ?</string>
     <string name="sameNumber">There is contact with the same phone number !</string>
     <string name="registrationError">You cannot save this contact !</string>
+    <string name="save">Save</string>
 
 
     <!-- Contact information -->

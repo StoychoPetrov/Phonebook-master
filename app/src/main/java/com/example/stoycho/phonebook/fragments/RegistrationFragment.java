@@ -100,6 +100,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 String code     = getString(R.string.plus) + mPhoneCode + " ";
                 mCountryEdbId   = country.getId();
                 mCallingCodeTxt.setText(code);
+                mCallingCodeTxt.setVisibility(View.VISIBLE);
                 String gender   = user.getGender();
                 if (gender != null && gender.equals(getString(R.string.male)))
                     mMaleRadioBtn.setChecked(true);
@@ -247,6 +248,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mCountryEdb.setText(country.getCountryName());
         mPhoneCode = country.getCallingCode();
         String code = getString(R.string.plus) + mPhoneCode + " ";
+        mCallingCodeTxt.setVisibility(View.VISIBLE);
         mCallingCodeTxt.setText(code);
         mCountryEdbId = country.getId();
     }
