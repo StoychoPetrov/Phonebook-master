@@ -552,11 +552,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(mFilterCurrentTopMargin <= -mFilterLayout.getHeight()/2)
-                    animateFilter(mFilterCurrentTopMargin,-mFilterLayout.getHeight());
-                else
-                {
-                    animateFilter(mFilterCurrentTopMargin,mFilterLayoutStartTopMargin);
+                if (mFilterCurrentTopMargin <= -mFilterLayout.getHeight() / 2)
+                    animateFilter(mFilterCurrentTopMargin, -mFilterLayout.getHeight());
+                else {
+                    animateFilter(mFilterCurrentTopMargin, mFilterLayoutStartTopMargin);
                 }
                 break;
         }
@@ -565,12 +564,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     }
 
     @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    public void beforeTextChanged(CharSequence charSequence,  int start, int count, int after) {
 
     }
 
     @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 
     }
 
