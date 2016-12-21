@@ -1,9 +1,8 @@
 package com.example.stoycho.phonebook.activities;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,12 +24,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -47,13 +44,11 @@ import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.fragments.CountriesFragment;
 import com.example.stoycho.phonebook.fragments.RegistrationFragment;
 import com.example.stoycho.phonebook.models.Country;
-import com.example.stoycho.phonebook.models.GenderDialog;
 import com.example.stoycho.phonebook.models.InformationDialog;
 import com.example.stoycho.phonebook.models.User;
 import com.example.stoycho.phonebook.tasks.DownloadData;
 import com.example.stoycho.phonebook.utils.Constants;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,15 +65,19 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private EditText                    mSearchCountryEdb;
     private Country                     mSelectedFilterCountry;
     private RelativeLayout              mFilterLayout;
+    private RelativeLayout              mBar;
     private ImageButton                 mFilterButton;
     private ImageButton                 mSearchButton;
     private RadioGroup                  mGenderRadioGroup;
+    private Button                      mResetButton;
+    private Button                      mApplyButton;
 
     private String                      mFilterGender;
     private int                         mFirstTouchPositionY;
     private int                         mFilterCurrentTopMargin;
     private int                         mFilterLayoutStartTopMargin;
     private boolean                     mStartAnimation;
+    private boolean                     mNotCountrySearching;
 
     private final static String ALL_COUNTRIES_ARE_SELECTED              = "all_selected";
     private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 1;
@@ -103,10 +102,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         checkPermissions();
 
         mFilterLayout.measure(0,0);
+        mBar.measure(0,0);
         RelativeLayout.LayoutParams filterLayoutParams = (RelativeLayout.LayoutParams) mFilterLayout.getLayoutParams();
 
-        mFilterLayoutStartTopMargin     =   filterLayoutParams.topMargin;
-        filterLayoutParams.topMargin    =   -mFilterLayout.getMeasuredHeight();
+        mFilterLayoutStartTopMargin         = filterLayoutParams.bottomMargin;
+        filterLayoutParams.bottomMargin     = getResources().getDisplayMetrics().heightPixels - mBar.getMeasuredHeight();
+        filterLayoutParams.topMargin        = mBar.getMeasuredHeight() - getResources().getDisplayMetrics().heightPixels;
         mFilterLayout.setLayoutParams(filterLayoutParams);
     }
 
@@ -115,6 +116,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mNewContactButton       = (FloatingActionButton)    findViewById(R.id.add_user);
         mRecyclerView           = (RecyclerView)            findViewById(R.id.recycleView);
         mFilterLayout           = (RelativeLayout)          findViewById(R.id.filter_layout);
+        mBar                    = (RelativeLayout)          findViewById(R.id.bar);
         mTitleTxt               = (TextView)                findViewById(R.id.title);
         mEmptyTxt               = (TextView)                findViewById(R.id.empty_txt);
         mFilterButton           = (ImageButton)             findViewById(R.id.filter_button);
@@ -122,6 +124,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mCountryEdb             = (EditText)                findViewById(R.id.country_editbox);
         mSearchCountryEdb       = (EditText)                findViewById(R.id.search);
         mGenderRadioGroup       = (RadioGroup)              findViewById(R.id.gender_radio);
+        mResetButton            = (Button)                  findViewById(R.id.reset_button);
+        mApplyButton            = (Button)                  findViewById(R.id.apply_button);
 
         mRecyclerAdapter        = new UsersRecyclerAdapter(this,mRecyclerView,mUsers);
     }
@@ -136,6 +140,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mFilterLayout.setOnTouchListener(this);
         mSearchCountryEdb.addTextChangedListener(this);
         mSearchButton.setOnClickListener(this);
+        mApplyButton.setOnClickListener(this);
+        mResetButton.setOnClickListener(this);
     }
 
     private void animateFilter(float topMargin, float increaseHeight)
@@ -145,12 +151,17 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                ((RelativeLayout.LayoutParams)mFilterLayout.getLayoutParams()).topMargin = ((Float) valueAnimator.getAnimatedValue()).intValue();
+                ((RelativeLayout.LayoutParams)mFilterLayout.getLayoutParams()).bottomMargin = ((Float) valueAnimator.getAnimatedValue()).intValue();
+                ((RelativeLayout.LayoutParams)mFilterLayout.getLayoutParams()).topMargin = -((Float) valueAnimator.getAnimatedValue()).intValue();
                 mFilterLayout.requestLayout();
             }
         });
 
         valueAnimator.start();
+        if(increaseHeight == mFilterLayoutStartTopMargin)
+            mNewContactButton.setVisibility(View.GONE);
+        else
+            mNewContactButton.setVisibility(View.VISIBLE);
     }
 
     private void checkPermissions()
@@ -193,6 +204,11 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             public void onAnimationEnd(Animation animation) {
                 goneView.setVisibility(View.VISIBLE);
                 mStartAnimation = false;
+                if(goneView.getId() == R.id.search) {
+                    mSearchCountryEdb.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mSearchCountryEdb, InputMethodManager.SHOW_IMPLICIT);
+                }
             }
 
             @Override
@@ -209,6 +225,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if(visibleView.getId() == R.id.search)
+                {
+                    mSearchCountryEdb.clearFocus();
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mSearchCountryEdb.getWindowToken(), 0);
+                }
                 visibleView.setVisibility(View.INVISIBLE);
             }
 
@@ -274,6 +296,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onClick(View clickedView) {
         int id = clickedView.getId();
+        RelativeLayout.LayoutParams filterParams = (RelativeLayout.LayoutParams) mFilterLayout.getLayoutParams();
 
         switch (id)
         {
@@ -282,10 +305,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 mTitleTxt.setText(getString(R.string.registration));
                 break;
             case R.id.filter_button:
-                if(((RelativeLayout.LayoutParams)mFilterLayout.getLayoutParams()).topMargin < mFilterLayoutStartTopMargin)
-                    animateFilter(-mFilterLayout.getHeight(),mFilterLayoutStartTopMargin);
+                if(filterParams.bottomMargin > mFilterLayoutStartTopMargin)
+                    animateFilter(filterParams.bottomMargin,mFilterLayoutStartTopMargin);
                 else
-                    animateFilter(mFilterLayoutStartTopMargin,-mFilterLayout.getHeight());
+                    animateFilter(mFilterLayoutStartTopMargin,getResources().getDisplayMetrics().heightPixels - mBar.getHeight());
                 break;
             case R.id.country_editbox:
                 onSelectCountry();
@@ -293,12 +316,51 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.search_button:
                 if(mSearchCountryEdb.getVisibility() == View.INVISIBLE) {
                     replaceElementsWithFade(mTitleTxt, mSearchCountryEdb);
-                    mSearchCountryEdb.requestFocus();
                 }
                 else
                     replaceElementsWithFade(mSearchCountryEdb,mTitleTxt);
                 break;
+            case R.id.reset_button:
+                resetFilter();
+                break;
+            case R.id.apply_button:
+                applyFilter();
+                animateFilter(filterParams.bottomMargin,getResources().getDisplayMetrics().heightPixels - mBar.getHeight());
+                break;
         }
+    }
+
+    private void applyFilter()
+    {
+        int filterCountryId;
+        int checkedButtonId     = mGenderRadioGroup.getCheckedRadioButtonId();
+
+        String gender           = ((RadioButton)    mGenderRadioGroup.findViewById(checkedButtonId)).getText().toString();
+
+        if(mSelectedFilterCountry != null && mSelectedFilterCountry.getCountryName() != null)
+            filterCountryId = mSelectedFilterCountry.getId();
+        else
+            filterCountryId = Constants.INVALID_ROW_INDEX;
+
+        if(gender.equals(getString(R.string.all)))
+           gender = null;
+
+        mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,filterCountryId, gender,null,mSearchCountryEdb.getText().toString());
+
+        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
+        mRecyclerAdapter.notifyDataSetChanged();
+
+        checkSizeOfContactsAndSetMessage();
+
+    }
+
+    private void resetFilter()
+    {
+        mCountryEdb.setText(getString(R.string.all));
+        mGenderRadioGroup.check(mGenderRadioGroup.getChildAt(0).getId());
+
+        mFilterGender = null;
+        mSelectedFilterCountry = null;
     }
 
     private void onSelectCountry()                                                      //start CountriesFragment
@@ -329,12 +391,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void setFilterCountry(Country country)                                     //The contacts are selected by country
     {
         mSelectedFilterCountry  = country;
-        mCountries              = new ArrayList<>();
-
-        int checkedButtonId     =                   mGenderRadioGroup.getCheckedRadioButtonId();
-        String gender           = ((RadioButton)    mGenderRadioGroup.findViewById(checkedButtonId)).getText().toString();
-
-        mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,country.getCountryName() != null ? country.getId():-1, !gender.equals(getString(R.string.all)) ? gender : null,null,mSearchCountryEdb.getText().toString());
 
         if(country.getCountryName() == null) {
             mCountryEdb.setText(getString(R.string.all));
@@ -342,11 +398,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         }
         else
             mCountryEdb.setText(country.getCountryName());
-
-        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
-        mRecyclerAdapter.notifyDataSetChanged();
-
-        checkSizeOfContactsAndSetMessage();
     }
 
     @Override
@@ -415,6 +466,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     public void onBackStackChanged() {
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+
         if (getIntent() != null && getIntent().hasExtra(Constants.BUNDLE_COUNTRY_KEY) && getIntent().hasExtra(Constants.BUNDLE_USER_KEY))   // listener for backstack changing, in case there is intent with user and country for update, updating user and remove intent
         {
             User    user    = getIntent().getExtras().getParcelable(Constants.BUNDLE_USER_KEY);
@@ -440,7 +493,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             getIntent().removeExtra(Constants.INTENT_FILTER_COUNTRY_KEY);
         }
 
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0 && !getSupportFragmentManager().getBackStackEntryAt(backStackCount-1).getName().equals(Constants.FILTER_BACKSTACK_NAME)) {
             mNewContactButton.setVisibility(View.GONE);
             mFilterButton.setVisibility(View.GONE);
         }
@@ -448,8 +501,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             mNewContactButton.setVisibility(View.VISIBLE);
             mFilterButton.setVisibility(View.VISIBLE);
         }
-
-        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
 
         if(getSupportFragmentManager().getBackStackEntryCount() > 0 && getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName() != null
                 && getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName().equals(Constants.COUNTRY_BACKSTACK_NAME) && !mStartAnimation)
@@ -462,6 +513,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             if(mSearchCountryEdb.getVisibility() == View.VISIBLE)
                 replaceElementsWithFade(mSearchCountryEdb,mTitleTxt);
 
+            mNotCountrySearching = true;
             mSearchCountryEdb.setText("");
         }
     }
@@ -520,20 +572,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int checkedButtonId) {
         RadioButton checkedButton = (RadioButton) radioGroup.findViewById(checkedButtonId);
-        mCountries      = new ArrayList<>();
         mFilterGender   = checkedButton.getText().toString();
-        int countryId   = Constants.INVALID_ROW_INDEX;
-
-        if(mSelectedFilterCountry != null)
-            countryId = mSelectedFilterCountry.getId();
 
         if(mFilterGender.equals(getString(R.string.all)))
             mFilterGender          = null;
-
-        mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,countryId,mFilterGender,null,mSearchCountryEdb.getText().toString());
-        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
-        mRecyclerAdapter.notifyDataSetChanged();
-        checkSizeOfContactsAndSetMessage();
     }
 
     private void checkSizeOfContactsAndSetMessage()
@@ -561,15 +603,16 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 mFirstTouchPositionY = touchPositionY - lParams.topMargin;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(touchPositionY - mFirstTouchPositionY < topMarginView) {
-                    layoutParams.topMargin  = touchPositionY - mFirstTouchPositionY;
-                    mFilterCurrentTopMargin = touchPositionY - mFirstTouchPositionY;
+                if(mFirstTouchPositionY - touchPositionY > 0) {
+                    layoutParams.bottomMargin = mFirstTouchPositionY - touchPositionY;
+                    layoutParams.topMargin = touchPositionY - mFirstTouchPositionY;
+                    mFilterCurrentTopMargin = mFirstTouchPositionY - touchPositionY;
                     view.setLayoutParams(layoutParams);
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mFilterCurrentTopMargin <= -mFilterLayout.getHeight() / 2)
-                    animateFilter(mFilterCurrentTopMargin, -mFilterLayout.getHeight());
+                if (mFilterCurrentTopMargin > mFilterLayout.getHeight() / 3)
+                    animateFilter(mFilterCurrentTopMargin, mFilterLayout.getHeight());
                 else {
                     animateFilter(mFilterCurrentTopMargin, mFilterLayoutStartTopMargin);
                 }
@@ -604,11 +647,15 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             else
                 filterCountryId = Constants.INVALID_ROW_INDEX;
 
-            mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,filterCountryId,mFilterGender,null,mSearchCountryEdb.getText().toString());
-            mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
-            mRecyclerAdapter.notifyDataSetChanged();
+            if(!mNotCountrySearching) {
+                mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries, filterCountryId, mFilterGender, null, mSearchCountryEdb.getText().toString());
+                mRecyclerAdapter.setUsersAndCountries(mUsers, mCountries);
+                mRecyclerAdapter.notifyDataSetChanged();
 
-            checkSizeOfContactsAndSetMessage();
+                checkSizeOfContactsAndSetMessage();
+            }
+            else
+                mNotCountrySearching = false;
         }
     }
 }

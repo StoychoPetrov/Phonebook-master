@@ -214,6 +214,18 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
             else
                 Toast.makeText(getActivity(),getString(R.string.sameNumber),Toast.LENGTH_SHORT).show();
         }
+        else if(mHasEmailError)
+        {
+            Toast.makeText(getActivity(),R.string.invalid_email,Toast.LENGTH_SHORT).show();
+        }
+        else if(mHasPhoneError)
+        {
+            Toast.makeText(getActivity(),R.string.invalid_phone,Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getActivity(),R.string.empty_box,Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void registerUser()
@@ -257,8 +269,9 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mCallingCodeTxt.setVisibility(View.VISIBLE);
         if(mPhoneCode != null) {
             mCallingCodeTxt.setText(code);
-            mCallingCodeTxt.setVisibility(View.GONE);
         }
+        else
+            mCallingCodeTxt.setVisibility(View.GONE);
         mCountryEdbId = country.getId();
     }
 
@@ -280,7 +293,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void checkPhoneValidation()
     {
-        if(!Validations.phoneValidation(mPhoneNumberEdb.getText().toString()))
+        if(!android.util.Patterns.PHONE.matcher(mPhoneNumberEdb.getText().toString()).matches())
         {
             mPhoneNumberEdb.setError(getString(R.string.phone_error));
             mHasPhoneError = true;

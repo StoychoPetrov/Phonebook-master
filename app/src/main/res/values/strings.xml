@@ -31,6 +31,9 @@
     <string name="sameNumber">There is contact with the same phone number !</string>
     <string name="registrationError">You cannot save this contact !</string>
     <string name="save">Save</string>
+    <string name="invalid_email">Invalid email !</string>
+    <string name="invalid_phone">Invalid phone number !</string>
+    <string name="empty_box">There is empty box !</string>
 
 
     <!-- Contact information -->
@@ -57,6 +60,10 @@
     <string name="left_scope">(</string>                <!-- Left scope about calling code -->
     <string name="calling_code_plus">+</string>         <!-- Plus about calling code -->
     <string name="right_scope">)</string>               <!-- Right scope about calling code -->
+
+    <!-- Filter strings -->
+    <string name="reset">RESET</string>
+    <string name="apply">apply</string>
 
     <string name="permission_denied_phone_call">If you want to call, you have to grant the permission !</string>
 

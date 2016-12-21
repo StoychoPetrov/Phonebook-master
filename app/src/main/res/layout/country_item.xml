@@ -5,9 +5,9 @@
 
     <!-- TextView about country name -->
     <TextView
+        android:id="@+id/countryName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/countryName"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/callingCode"
         android:paddingLeft="20dp"
@@ -19,9 +19,9 @@
 
     <!-- TextView about calling code of country -->
     <TextView
+        android:id="@+id/callingCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/callingCode"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

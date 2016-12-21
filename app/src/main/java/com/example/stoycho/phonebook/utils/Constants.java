@@ -10,10 +10,13 @@ public class Constants {
     public final static String BUNDLE_COUNTRY_KEY                       = "country";
     public final static String BUNDLE_POSITION_KEY                      = "position";
 
-    public final static String REGISTRATION_BACKSTACK_NAME              = "registration";
-    public final static String COUNTRY_BACKSTACK_NAME                   = "country_backstack";
+    public final static String REGISTRATION_BACKSTACK_NAME              = "registrationBackstack";
+    public final static String COUNTRY_BACKSTACK_NAME                   = "countryBackstack";
+    public final static String FILTER_BACKSTACK_NAME                    = "filterBackstack";
+
     public final static String REGISTRATION_FRAGMENT_TAG                = "registerFragment";
     public final static String COIUNTRIES_FRAGMENT_TAG                  = "countryFragment";
+    public final static String FILTER_FRAGMENT_TAG                      = "filterFragment";
 
     public final static String INTENT_FILTER_COUNTRY_KEY                = "filter_country";
     public final static String INTENT_REFRESH_USERS_KEY                 = "refresh_users";
