@@ -113,14 +113,13 @@ public class CountriesFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onRecyclerItemClickListener(View view, int position) {
-        List<Fragment> fragments = getFragmentManager().getFragments();
         RegistrationFragment registrationFragment = (RegistrationFragment) getFragmentManager().findFragmentByTag(Constants.REGISTRATION_FRAGMENT_TAG);                  // check if RegistrationFragment is already exist.
 
         if(registrationFragment != null) {
             getFragmentManager().popBackStack(Constants.REGISTRATION_BACKSTACK_NAME,0);                                                                                 // RegistrationFragment is exist and pop fragments while RegistrationFragment become visible.
             registrationFragment.setSelectedCountry(mCountries.get(position));
         }
-        else if(fragments.size() == 1) {
+        else if(getFragmentManager().getBackStackEntryCount() == 1) {
             getActivity().getIntent().putExtra(Constants.INTENT_FILTER_COUNTRY_KEY, mCountries.get(position));                                                          // Put extra in activity intent.
             getFragmentManager().popBackStack();                                                                                                                                                            // pop all fragments
         }

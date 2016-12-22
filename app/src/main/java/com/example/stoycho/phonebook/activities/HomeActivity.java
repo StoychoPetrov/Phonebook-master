@@ -3,7 +3,6 @@ package com.example.stoycho.phonebook.activities;
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,7 +13,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,7 +42,6 @@ import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.fragments.CountriesFragment;
 import com.example.stoycho.phonebook.fragments.RegistrationFragment;
 import com.example.stoycho.phonebook.models.Country;
-import com.example.stoycho.phonebook.models.InformationDialog;
 import com.example.stoycho.phonebook.models.User;
 import com.example.stoycho.phonebook.tasks.DownloadData;
 import com.example.stoycho.phonebook.utils.Constants;
@@ -68,6 +65,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private RelativeLayout              mBar;
     private ImageButton                 mFilterButton;
     private ImageButton                 mSearchButton;
+    private ImageButton                 mCloseButton;
     private RadioGroup                  mGenderRadioGroup;
     private Button                      mResetButton;
     private Button                      mApplyButton;
@@ -120,13 +118,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mEmptyTxt               = (TextView)                findViewById(R.id.empty_txt);
         mFilterButton           = (ImageButton)             findViewById(R.id.filter_button);
         mSearchButton           = (ImageButton)             findViewById(R.id.search_button);
+        mCloseButton            = (ImageButton)             findViewById(R.id.close_button);
         mCountryEdb             = (EditText)                findViewById(R.id.country_editbox);
         mSearchCountryEdb       = (EditText)                findViewById(R.id.search);
         mGenderRadioGroup       = (RadioGroup)              findViewById(R.id.gender_radio);
         mResetButton            = (Button)                  findViewById(R.id.reset_button);
         mApplyButton            = (Button)                  findViewById(R.id.apply_button);
 
-        mRecyclerAdapter        = new UsersRecyclerAdapter(this,mRecyclerView,mUsers);
+        mRecyclerAdapter        = new UsersRecyclerAdapter(mUsers);
     }
 
     private void setListeners()
@@ -141,6 +140,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mSearchButton.setOnClickListener(this);
         mApplyButton.setOnClickListener(this);
         mResetButton.setOnClickListener(this);
+        mCloseButton.setOnClickListener(this);
     }
 
     private void animateFilter(float topMargin, float increaseHeight)
@@ -157,6 +157,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         });
 
         valueAnimator.start();
+
         if(increaseHeight == mFilterLayoutStartTopMargin)
             mNewContactButton.setVisibility(View.GONE);
         else
@@ -317,11 +318,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                 onSelectCountry();
                 break;
             case R.id.search_button:
-                if(mSearchCountryEdb.getVisibility() == View.INVISIBLE) {
-                    replaceElementsWithFade(mTitleTxt, mSearchCountryEdb);
-                }
-                else
-                    replaceElementsWithFade(mSearchCountryEdb,mTitleTxt);
+                replaceElementsWithFade(mTitleTxt, mSearchCountryEdb);
+                replaceElementsWithFade(mSearchButton,mCloseButton);
                 break;
             case R.id.reset_button:
                 resetFilter();
@@ -329,6 +327,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.apply_button:
                 applyFilter();
                 animateFilter(filterParams.bottomMargin,getResources().getDisplayMetrics().heightPixels - mBar.getHeight());
+                break;
+            case R.id.close_button:
+                replaceElementsWithFade(mCloseButton,mSearchButton);
+                replaceElementsWithFade(mSearchCountryEdb, mTitleTxt);
                 break;
         }
     }
@@ -414,21 +416,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-    private void deleteUserAlert(final int position)         //Show confirmation dialog for delete user.
-    {
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.deleteEntry))
-                .setMessage(getString(R.string.deleteInfo))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteUser(position);
-                    }
-                })
-                .setNegativeButton(android.R.string.no,null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
     private void deleteUser(int position)                                                       //Delete user from database and listview
     {
         UsersDatabaseCommunication usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(this);
@@ -458,12 +445,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         bundle.putParcelable(Constants.BUNDLE_COUNTRY_KEY,country);
         bundle.putParcelable(Constants.BUNDLE_USER_KEY,user);
+        bundle.putInt(Constants.BUNDLE_POSITION_KEY,position);
+
         registrationFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in,0,0,android.R.anim.fade_out).replace(R.id.replace_layout,registrationFragment,Constants.REGISTRATION_FRAGMENT_TAG)
                 .addToBackStack(Constants.REGISTRATION_BACKSTACK_NAME).commit();
 
-        mTitleTxt.setText(getString(R.string.editContact));
+        mTitleTxt.setText(getString(R.string.contact_information));
         onPause();
     }
 
@@ -498,11 +487,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         if(getSupportFragmentManager().getBackStackEntryCount() > 0 && !getSupportFragmentManager().getBackStackEntryAt(backStackCount-1).getName().equals(Constants.FILTER_BACKSTACK_NAME)) {
             mNewContactButton.setVisibility(View.GONE);
+            mSearchButton.setVisibility(View.GONE);
             mFilterButton.setVisibility(View.GONE);
         }
         else {
-            mNewContactButton.setVisibility(View.VISIBLE);
+            if(((RelativeLayout.LayoutParams)mFilterLayout.getLayoutParams()).bottomMargin > 0)
+                mNewContactButton.setVisibility(View.VISIBLE);
             mFilterButton.setVisibility(View.VISIBLE);
+            mSearchButton.setVisibility(View.VISIBLE);
         }
 
         if(getSupportFragmentManager().getBackStackEntryCount() > 0 && getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName() != null
@@ -519,6 +511,11 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             mNotCountrySearching = true;
             mSearchCountryEdb.setText("");
         }
+        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(Constants.INTENT_DELETE_USER_POSITION))
+        {
+            deleteUser(getIntent().getExtras().getInt(Constants.INTENT_DELETE_USER_POSITION));
+            getIntent().removeExtra(Constants.INTENT_DELETE_USER_POSITION);
+        }
     }
 
     @Override
@@ -526,19 +523,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         int clickedViewId = view.getId();
         switch (clickedViewId)
         {
-            case R.id.delete:
-                deleteUserAlert(position);
-                break;
-            case R.id.edit:
-                onEdit(position);
-                break;
             case R.id.call_button:
                 String phoneNumber = getString(R.string.plus) + mCountries.get(position).getCallingCode() +  mUsers.get(position).getPhoneNumber();
                 callToNumber(phoneNumber);
                 break;
-            case R.id.info_button:
-                InformationDialog dialog = new InformationDialog(this,mCountries.get(position),mUsers.get(position));
-                dialog.show();
+            case R.id.user_item:
+                onEdit(position);
                 break;
         }
     }

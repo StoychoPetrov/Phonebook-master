@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.telephony.PhoneNumberUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
 import com.example.stoycho.phonebook.models.Country;
 import com.example.stoycho.phonebook.models.User;
 import com.example.stoycho.phonebook.utils.Constants;
-import com.example.stoycho.phonebook.utils.Validations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +37,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private RadioButton mMaleRadioBtn;
     private RadioButton mFemaleRadioBtn;
     private Button      mAddBtn;
+    private Button      mDelete;
     private int         mCountryEdbId;
     private String      mPhoneCode;
     private boolean     mHasEmailError;
@@ -73,6 +72,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mMaleRadioBtn       = (RadioButton) root.findViewById(R.id.male);
         mFemaleRadioBtn     = (RadioButton) root.findViewById(R.id.female);
         mAddBtn             = (Button)      root.findViewById(R.id.add);
+        mDelete             = (Button)      root.findViewById(R.id.delete);
     }
 
     private void setListeners()
@@ -81,6 +81,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mCountryEdb.setOnClickListener(this);
         mEmailEdb.setOnFocusChangeListener(this);
         mPhoneNumberEdb.setOnFocusChangeListener(this);
+        mDelete.setOnClickListener(this);
     }
 
     private void setInformations()
@@ -115,6 +116,17 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                     mFemaleRadioBtn.setChecked(true);
             }
         }
+
+        mFirstNameEdb.setEnabled(false);
+        mLastNameEdb.setEnabled(false);
+        mCountryEdb.setEnabled(false);
+        mEmailEdb.setEnabled(false);
+        mPhoneNumberEdb.setEnabled(false);
+        mMaleRadioBtn.setEnabled(false);
+        mFemaleRadioBtn.setEnabled(false);
+        mCallingCodeTxt.setEnabled(false);
+
+        mAddBtn.setText(getString(R.string.edit));
     }
 
     @Override
@@ -124,17 +136,55 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         switch (id)
         {
             case R.id.add:
-                mPhoneNumberEdb.clearFocus();
-                mEmailEdb.clearFocus();
-                if(getArguments() == null)
-                    onAdd();
+                if(mAddBtn.getText().toString().equals(getString(R.string.save))) {
+                    mPhoneNumberEdb.clearFocus();
+                    mEmailEdb.clearFocus();
+                    if (getArguments() == null)
+                        onAdd();
+                    else
+                        onEdit();
+                }
                 else
-                    onEdit();
+                    changeToEdit();
                 break;
             case R.id.country:
                 onCountry();
                 break;
+            case R.id.delete:
+                deleteUser();
+                break;
         }
+    }
+
+    private void deleteUser()
+    {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.deleteEntry))
+                .setMessage(getString(R.string.deleteInfo))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        getActivity().getIntent().putExtra(Constants.INTENT_DELETE_USER_POSITION,getArguments().getInt(Constants.BUNDLE_POSITION_KEY));
+                        getFragmentManager().popBackStack();
+                    }
+                })
+                .setNegativeButton(android.R.string.no,null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void changeToEdit()
+    {
+        mFirstNameEdb.setEnabled(true);
+        mLastNameEdb.setEnabled(true);
+        mCountryEdb.setEnabled(true);
+        mEmailEdb.setEnabled(true);
+        mPhoneNumberEdb.setEnabled(true);
+        mMaleRadioBtn.setEnabled(true);
+        mFemaleRadioBtn.setEnabled(true);
+        mCallingCodeTxt.setEnabled(true);
+
+        mDelete.setVisibility(View.VISIBLE);
+        mAddBtn.setText(getString(R.string.save));
     }
 
     private void onEdit()

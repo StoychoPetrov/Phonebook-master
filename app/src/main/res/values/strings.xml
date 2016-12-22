@@ -10,6 +10,7 @@
     <string name="editContact">Edit contact</string>
     <string name="no_contacts">No contacts</string>
     <string name="tel">tel:</string>
+    <string name="contact_information">Contact information</string>
 
     <!-- Registration strings -->
     <string name="first_name">First name</string>
@@ -34,6 +35,8 @@
     <string name="invalid_email">Invalid email !</string>
     <string name="invalid_phone">Invalid phone number !</string>
     <string name="empty_box">There is empty box !</string>
+    <string name="delete">delete</string>
+    <string name="edit">edit</string>
 
 
     <!-- Contact information -->

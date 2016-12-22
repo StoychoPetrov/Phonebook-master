@@ -69,6 +69,20 @@
             android:background                  ="@android:color/transparent"
             android:contentDescription          ="@null"/>
 
+        <ImageButton
+            android:id                          ="@+id/close_button"
+            android:layout_width                ="wrap_content"
+            android:layout_height               ="match_parent"
+            android:layout_alignParentRight     ="true"
+            android:layout_alignParentEnd       ="true"
+            android:layout_centerVertical       ="true"
+            android:src                         ="@android:drawable/ic_menu_close_clear_cancel"
+            android:paddingRight                ="10dp"
+            android:paddingLeft                 ="10dp"
+            android:background                  ="@android:color/transparent"
+            android:contentDescription          ="@null"
+            android:visibility="invisible"/>
+
 
     </RelativeLayout>
 
@@ -206,6 +220,7 @@
                     android:paddingLeft         ="10dp"
                     android:paddingRight        ="10dp"
                     android:focusable           ="false"
+                    android:drawableRight       ="@mipmap/ic_keyboard_arrow_down_black_24dp"
                     android:hint                ="@string/country"/>
 
             </LinearLayout>
@@ -215,7 +230,7 @@
                 android:layout_height           ="match_parent"
                 android:layout_below            ="@+id/filter_country_layout"
                 android:padding                 ="15dp"
-                android:gravity                 ="center_vertical">
+                android:gravity                 ="bottom">
 
                 <Button
                     android:id                  ="@+id/reset_button"
