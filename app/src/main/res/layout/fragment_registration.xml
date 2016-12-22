@@ -168,6 +168,8 @@
                     android:layout_weight   ="1"
                     android:textColorHint   ="@android:color/darker_gray"
                     android:lines           ="1"
+                    android:paddingRight    ="10dp"
+                    android:paddingLeft     ="10dp"
                     android:inputType       ="phone" />
 
             </LinearLayout>

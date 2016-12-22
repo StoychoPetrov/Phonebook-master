@@ -50,8 +50,8 @@
     <!-- Delete record -->
     <string name="deleteEntry">Delete entry</string>
     <string name="deleteInfo">Are you sure you want to delete this entry ?</string>
-    <string name="successDelete">The user is removed successful !</string>
-    <string name="notSuccessDelete">The user is not removed successful !</string>
+    <string name="successDelete">The contact is removed successful !</string>
+    <string name="notSuccessDelete">The contact is not removed successful !</string>
 
     <!-- Update record -->
     <string name="successUpdate">You edit contact successful</string>
