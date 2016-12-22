@@ -82,7 +82,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private final static String ALL_COUNTRIES_ARE_SELECTED              = "all_selected";
     private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,11 +203,13 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             public void onAnimationEnd(Animation animation) {
                 goneView.setVisibility(View.VISIBLE);
                 mStartAnimation = false;
+
                 if(goneView.getId() == R.id.search) {
                     mSearchCountryEdb.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mSearchCountryEdb, InputMethodManager.SHOW_IMPLICIT);
                 }
+
             }
 
             @Override
@@ -231,6 +232,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mSearchCountryEdb.getWindowToken(), 0);
                 }
+
                 visibleView.setVisibility(View.INVISIBLE);
             }
 
@@ -245,6 +247,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     {
         String                               urlForGetCountries           = getString(R.string.countries_api);      // api for countries names
         final CountriesDatabaseCommunication countryDatabaseCommunication = CountriesDatabaseCommunication.getInstance(this);
+
         DownloadData                         data                         = new DownloadData(urlForGetCountries)         // make request to api for countries names
         {
             @Override
@@ -359,8 +362,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mCountryEdb.setText(getString(R.string.all));
         mGenderRadioGroup.check(mGenderRadioGroup.getChildAt(0).getId());
 
-        mFilterGender = null;
-        mSelectedFilterCountry = null;
+        mFilterGender           = null;
+        mSelectedFilterCountry  = null;
     }
 
     private void onSelectCountry()                                                      //start CountriesFragment
@@ -593,8 +596,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         RelativeLayout.LayoutParams layoutParams    = (RelativeLayout.LayoutParams) view
                 .getLayoutParams();
-
-        int topMarginView                           = layoutParams.topMargin;
 
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK)
         {

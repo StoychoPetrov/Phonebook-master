@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.telephony.PhoneNumberUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -304,7 +305,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
 
     private void checkEmailValidation()
     {
-        if(!Validations.emailValidation(mEmailEdb.getText().toString()))
+        if(!Patterns.EMAIL_ADDRESS.matcher(mEmailEdb.getText().toString()).matches())
         {
             mEmailEdb.setError(getString(R.string.email_error));
             mHasEmailError = true;
