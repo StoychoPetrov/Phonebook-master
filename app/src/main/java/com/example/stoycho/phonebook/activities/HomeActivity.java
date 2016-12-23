@@ -272,7 +272,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mCountries      = new ArrayList<>();
         mUsers          = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,UsersAndCountruesDatabaseComunication.WITHOUT_COUNTRY_ID,null,null,mSearchCountryEdb.getText().toString());  // make query for all users with their countries from Users table and Countries table
 
-        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
+        mRecyclerAdapter.setUsersAndCountries(mUsers);
         mRecyclerAdapter.notifyDataSetChanged();
 
         if(mUsers.size() > 0) {
@@ -352,7 +352,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         mUsers                  = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries,filterCountryId, gender,null,mSearchCountryEdb.getText().toString());
 
-        mRecyclerAdapter.setUsersAndCountries(mUsers,mCountries);
+        mRecyclerAdapter.setUsersAndCountries(mUsers);
         mRecyclerAdapter.notifyDataSetChanged();
 
         checkSizeOfContactsAndSetMessage();
@@ -640,7 +640,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
             if(!mNotCountrySearching) {
                 mUsers = UsersAndCountruesDatabaseComunication.getInstance(this).selectUsersAndTheirCountries(mCountries, filterCountryId, mFilterGender, null, mSearchCountryEdb.getText().toString());
-                mRecyclerAdapter.setUsersAndCountries(mUsers, mCountries);
+                mRecyclerAdapter.setUsersAndCountries(mUsers);
                 mRecyclerAdapter.notifyDataSetChanged();
 
                 checkSizeOfContactsAndSetMessage();
