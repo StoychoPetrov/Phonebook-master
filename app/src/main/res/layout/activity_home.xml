@@ -125,6 +125,7 @@
 
         </RelativeLayout>
 
+
         <!-- Button for add a new contact -->
         <android.support.design.widget.FloatingActionButton
             android:id                          ="@+id/add_user"

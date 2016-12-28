@@ -36,6 +36,12 @@ import android.widget.Toast;
 import com.example.stoycho.phonebook.Interfaces.OnRecyclerItemClick;
 import com.example.stoycho.phonebook.R;
 import com.example.stoycho.phonebook.adapters.UsersRecyclerAdapter;
+import com.example.stoycho.phonebook.communicationClasses.ConnectXmppServer;
+import com.example.stoycho.phonebook.communicationClasses.commands.AllCommands;
+import com.example.stoycho.phonebook.communicationClasses.commands.BaseComponentCommunication;
+import com.example.stoycho.phonebook.communicationClasses.commands.CommandGetActiveCountries;
+import com.example.stoycho.phonebook.communicationClasses.commands.CommandLogin;
+import com.example.stoycho.phonebook.communicationClasses.commands.Response;
 import com.example.stoycho.phonebook.database.CountriesDatabaseCommunication;
 import com.example.stoycho.phonebook.database.UsersAndCountruesDatabaseComunication;
 import com.example.stoycho.phonebook.database.UsersDatabaseCommunication;
@@ -43,13 +49,15 @@ import com.example.stoycho.phonebook.fragments.CountriesFragment;
 import com.example.stoycho.phonebook.fragments.RegistrationFragment;
 import com.example.stoycho.phonebook.models.Country;
 import com.example.stoycho.phonebook.models.User;
-import com.example.stoycho.phonebook.tasks.DownloadData;
 import com.example.stoycho.phonebook.utils.Constants;
+import com.example.stoycho.phonebook.utils.GlobalData;
+import com.example.stoycho.phonebook.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-public class HomeActivity extends FragmentActivity implements View.OnClickListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick,RadioGroup.OnCheckedChangeListener,View.OnTouchListener,TextWatcher {
+public class HomeActivity extends FragmentActivity implements View.OnClickListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick,RadioGroup.OnCheckedChangeListener,View.OnTouchListener,TextWatcher,ConnectXmppServer.onXmppConnectionListener,BaseComponentCommunication.onAnswerReceiveListener {
 
     private RecyclerView                mRecyclerView;
     private UsersRecyclerAdapter        mRecyclerAdapter;
@@ -76,6 +84,9 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private int                         mFilterLayoutStartTopMargin;
     private boolean                     mStartAnimation;
     private boolean                     mNotCountrySearching;
+    private CommandLogin                mCommandLogin;
+    private CommandGetActiveCountries   mCommandGetActiveCountries;
+
 
     private final static String ALL_COUNTRIES_ARE_SELECTED              = "all_selected";
     private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 1;
@@ -85,6 +96,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         initUI();
+        setConnection();
+
         mRecyclerView.setHasFixedSize(true);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -92,7 +105,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         setListeners();
-        loadCountries();
         loadUsers();
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
@@ -106,6 +118,17 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         filterLayoutParams.bottomMargin     = getResources().getDisplayMetrics().heightPixels - mBar.getMeasuredHeight();
         filterLayoutParams.topMargin        = mBar.getMeasuredHeight() - getResources().getDisplayMetrics().heightPixels;
         mFilterLayout.setLayoutParams(filterLayoutParams);
+    }
+
+    private void setConnection()
+    {
+        ConnectXmppServer connectXmppServer = ConnectXmppServer.getInstance(this,Utils.USERNAME_TEST,Utils.PASSWORD_TEST);
+        if(connectXmppServer != null) {
+            connectXmppServer.setUsername(Utils.USERNAME_TEST);
+            connectXmppServer.setPassword(Utils.PASSWORD_TEST);
+            connectXmppServer.setOnXmppConnectionEstablishListener(this);
+            connectXmppServer.connect();
+        }
     }
 
     private void initUI()
@@ -244,29 +267,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         });
     }
 
-    private void loadCountries()
-    {
-        String                               urlForGetCountries           = getString(R.string.countries_api);      // api for countries names
-        final CountriesDatabaseCommunication countryDatabaseCommunication = CountriesDatabaseCommunication.getInstance(this);
-
-        DownloadData                         data                         = new DownloadData(urlForGetCountries)         // make request to api for countries names
-        {
-            @Override
-            protected void onPostExecute(String countriesJson) {
-            super.onPostExecute(countriesJson);
-                List<Country> countries = Country.parceCountriesFromJson(countriesJson);
-
-                for(Country country : countries)
-                {
-                   countryDatabaseCommunication.saveInDatabase(country);
-                }
-            }
-        };
-
-        if(countryDatabaseCommunication.getCountOfCountries() == 0)
-            data.execute();
-    }
-
     private void loadUsers()
     {
         mCountries      = new ArrayList<>();
@@ -277,10 +277,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
         if(mUsers.size() > 0) {
             mFilterButton.setVisibility(View.VISIBLE);
+            mSearchButton.setVisibility(View.VISIBLE);
             mEmptyTxt.setVisibility(View.GONE);
         }
         else {
             mFilterButton.setVisibility(View.GONE);
+            mSearchButton.setVisibility(View.GONE);
             mEmptyTxt.setVisibility(View.VISIBLE);
         }
     }
@@ -292,6 +294,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mRecyclerAdapter.notifyDataSetChanged();
 
         if(mUsers.size() > 0) {
+            mSearchButton.setVisibility(View.VISIBLE);
             mFilterButton.setVisibility(View.VISIBLE);
             mEmptyTxt.setVisibility(View.GONE);
         }
@@ -426,6 +429,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             mRecyclerAdapter.notifyDataSetChanged();
 
             if(mUsers.size() == 0) {
+                mSearchButton.setVisibility(View.GONE);
                 mFilterButton.setVisibility(View.GONE);
                 mEmptyTxt.setVisibility(View.VISIBLE);
             }
@@ -493,8 +497,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         else {
             if(((RelativeLayout.LayoutParams)mFilterLayout.getLayoutParams()).bottomMargin > 0)
                 mNewContactButton.setVisibility(View.VISIBLE);
-            mFilterButton.setVisibility(View.VISIBLE);
-            mSearchButton.setVisibility(View.VISIBLE);
+            if(mUsers.size() > 0) {
+                mFilterButton.setVisibility(View.VISIBLE);
+                mSearchButton.setVisibility(View.VISIBLE);
+            }
         }
 
         if(getSupportFragmentManager().getBackStackEntryCount() > 0 && getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName() != null
@@ -613,6 +619,13 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         return true;
     }
 
+    private void getActiveCounties(){
+        mCommandGetActiveCountries = new CommandGetActiveCountries(this, this);
+        mCommandGetActiveCountries.setInputParameters(CommandGetActiveCountries.RISK_TYPE_ALL);
+        mCommandGetActiveCountries.setmHideProgressOnComplete(false);
+        mCommandGetActiveCountries.sendCommand();
+    }
+
     @Override
     public void beforeTextChanged(CharSequence charSequence,  int start, int count, int after) {
 
@@ -647,6 +660,48 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             }
             else
                 mNotCountrySearching = false;
+        }
+    }
+
+    private void sendLoginCommand()
+    {
+        mCommandLogin = new CommandLogin(this, this);
+        mCommandLogin.setInputParameters(Utils.USERNAME_TEST, Utils.md5(Utils.PASSWORD_TEST));
+        mCommandLogin.setmShowProgressBar(false);
+        mCommandLogin.setmProceedErrorAnswer(true);
+        mCommandLogin.setmShowErrorToast(false);
+        mCommandLogin.sendCommand();
+    }
+
+    @Override
+    public void onConnect() {
+        sendLoginCommand();
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onAnswerReceived(int command, String body) {
+        final   CountriesDatabaseCommunication countryDatabaseCommunication   = CountriesDatabaseCommunication.getInstance(this);
+
+        if ((mCommandLogin.getStatus() == Response.RESPOND_STATUS_SUCCESS || mCommandLogin.getStatus() == Response.RESPOND_STATUS_NO_DEFAULT_WALLET) && command == AllCommands.COMMAND_LOGIN) {
+            GlobalData.getInstance().setSession(mCommandLogin.getSession());
+            GlobalData.getInstance().setmSessionStartMillis(Calendar.getInstance().getTimeInMillis());
+
+            if(countryDatabaseCommunication.getCountOfCountries() == 0)
+                getActiveCounties();
+        }
+        else if( command == AllCommands.COMMAND_GET_ACTIVE_COUNTRIES){
+
+            mCountries  = mCommandGetActiveCountries.getCountries();
+
+            for(Country country : mCountries)
+            {
+                countryDatabaseCommunication.saveInDatabase(country);
+            }
         }
     }
 }

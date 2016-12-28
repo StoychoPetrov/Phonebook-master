@@ -3,18 +3,13 @@ package com.example.stoycho.phonebook.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.stoycho.phonebook.Interfaces.OnRecyclerItemClick;
@@ -58,7 +53,6 @@ public class CountriesFragment extends Fragment implements View.OnClickListener,
             mSearchTxt.setVisibility(View.GONE);
             mDividerView.setVisibility(View.GONE);
         }
-
         loadCountriesList();
         return root;
     }

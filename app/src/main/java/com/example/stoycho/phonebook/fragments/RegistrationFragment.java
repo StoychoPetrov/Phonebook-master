@@ -99,7 +99,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
                 mPhoneNumberEdb.setText(user.getPhoneNumber());
 
                 mPhoneCode      = country.getCallingCode();
-                String code     = getString(R.string.plus) + mPhoneCode + " ";
+                String code     = mPhoneCode + " ";
                 mCountryEdbId   = country.getId();
 
                 if(mPhoneCode != null)
@@ -316,7 +316,7 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     {
         mCountryEdb.setText(country.getCountryName());
         mPhoneCode = country.getCallingCode();
-        String code = getString(R.string.plus) + mPhoneCode + " ";
+        String code = mPhoneCode + " ";
         mCallingCodeTxt.setVisibility(View.VISIBLE);
         if(mPhoneCode != null) {
             mCallingCodeTxt.setText(code);
