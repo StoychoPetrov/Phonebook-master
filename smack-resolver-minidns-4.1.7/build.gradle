@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('smack-resolver-minidns-4.1.7.jar'))

@@ -4,6 +4,24 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Phonebook-master.iml" filepath="$PROJECT_DIR$/Phonebook-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jxmpp-core-0.4.2-beta1/jxmpp-core-0.4.2-beta1.iml" filepath="$PROJECT_DIR$/jxmpp-core-0.4.2-beta1/jxmpp-core-0.4.2-beta1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jxmpp-util-cache-0.4.2-beta1/jxmpp-util-cache-0.4.2-beta1.iml" filepath="$PROJECT_DIR$/jxmpp-util-cache-0.4.2-beta1/jxmpp-util-cache-0.4.2-beta1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/minidns-0.1.1/minidns-0.1.1.iml" filepath="$PROJECT_DIR$/minidns-0.1.1/minidns-0.1.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-android-4.1.7/smack-android-4.1.7.iml" filepath="$PROJECT_DIR$/smack-android-4.1.7/smack-android-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-android-extensions-4.1.7/smack-android-extensions-4.1.7.iml" filepath="$PROJECT_DIR$/smack-android-extensions-4.1.7/smack-android-extensions-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-bosh-4.1.7/smack-bosh-4.1.7.iml" filepath="$PROJECT_DIR$/smack-bosh-4.1.7/smack-bosh-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-compression-jzlib-4.1.7/smack-compression-jzlib-4.1.7.iml" filepath="$PROJECT_DIR$/smack-compression-jzlib-4.1.7/smack-compression-jzlib-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-core-4.1.7/smack-core-4.1.7.iml" filepath="$PROJECT_DIR$/smack-core-4.1.7/smack-core-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-experimental-4.1.7/smack-experimental-4.1.7.iml" filepath="$PROJECT_DIR$/smack-experimental-4.1.7/smack-experimental-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-extensions-4.1.7/smack-extensions-4.1.7.iml" filepath="$PROJECT_DIR$/smack-extensions-4.1.7/smack-extensions-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-im-4.1.7/smack-im-4.1.7.iml" filepath="$PROJECT_DIR$/smack-im-4.1.7/smack-im-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-java7-4.1.7/smack-java7-4.1.7.iml" filepath="$PROJECT_DIR$/smack-java7-4.1.7/smack-java7-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-resolver-dnsjava-4.1.7/smack-resolver-dnsjava-4.1.7.iml" filepath="$PROJECT_DIR$/smack-resolver-dnsjava-4.1.7/smack-resolver-dnsjava-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-resolver-javax-4.1.7/smack-resolver-javax-4.1.7.iml" filepath="$PROJECT_DIR$/smack-resolver-javax-4.1.7/smack-resolver-javax-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-resolver-minidns-4.1.7/smack-resolver-minidns-4.1.7.iml" filepath="$PROJECT_DIR$/smack-resolver-minidns-4.1.7/smack-resolver-minidns-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-sasl-javax-4.1.7/smack-sasl-javax-4.1.7.iml" filepath="$PROJECT_DIR$/smack-sasl-javax-4.1.7/smack-sasl-javax-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-sasl-provided-4.1.7/smack-sasl-provided-4.1.7.iml" filepath="$PROJECT_DIR$/smack-sasl-provided-4.1.7/smack-sasl-provided-4.1.7.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smack-tcp-4.1.7/smack-tcp-4.1.7.iml" filepath="$PROJECT_DIR$/smack-tcp-4.1.7/smack-tcp-4.1.7.iml" />
     </modules>
   </component>
 </project>
