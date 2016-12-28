@@ -1,8 +1,5 @@
 package com.example.stoycho.phonebook.utils;
 
-/**
- * Created by martin.dimitrov on 12.12.2015 г..
- */
 public class GlobalData {
     private String mSession;
 

@@ -11,9 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-/**
- * Created by kamen.troshev on 10.10.2016 г..
- */
+
+
 public class CommandGetActiveCountries extends BaseComponentCommunication {
 
     private final static String TAG_COUNTRIES       = "countries";

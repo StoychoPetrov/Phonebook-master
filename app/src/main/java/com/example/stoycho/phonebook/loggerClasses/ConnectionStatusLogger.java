@@ -7,9 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 
-/**
- * Created by kamen.troshev on 17.12.2015 г..
- */
 public class ConnectionStatusLogger {
     private static final String FILENAME    = "connectionLog.txt";
 

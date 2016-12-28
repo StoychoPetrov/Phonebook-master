@@ -47,9 +47,6 @@ import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by martin.dimitrov on 12.12.2015 г..
- */
 public class Utils {
     public final static String  ANDROID                             = "2";
     public static final String  MYPOS_ORIGINATOR                    = "80";

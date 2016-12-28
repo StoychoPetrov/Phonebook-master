@@ -7,9 +7,6 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by lyubomir.babev on 20/04/2016.
- */
 public class CommandLogin extends BaseComponentCommunication {
     private static String   TAG_USERNAME        = "email";
     private static String   TAG_PASSWORD        = "password";
