@@ -25,6 +25,7 @@ public class Database extends SQLiteOpenHelper {
     private final static String COLUMN_EMAIL            = "email";
     private final static String COLUMN_PHONE_NUMBER     = "phone_number";
     private final static String COLUMN_GENDER           = "gender";
+    private final static String COLUMN_IMAGE            = "image";
     private final static String COLUMN_COUNTRY_ID_FK    = "coutry_id_fk";
 
     /*********** Countries table columns*********/
@@ -34,7 +35,7 @@ public class Database extends SQLiteOpenHelper {
 
     /*********** Create tables *******************/
     private final static String CREATE_USERS = " CREATE TABLE " + USERS_TABLE_NAME + " ( " + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_FIRST_NAME + " TEXT, " + COLUMN_LAST_NAME + " TEXT, "
-            + COLUMN_EMAIL + " TEXT, " + COLUMN_PHONE_NUMBER + " TEXT, " + COLUMN_GENDER + " TEXT, " + COLUMN_COUNTRY_ID_FK + " INTEGER, FOREIGN KEY (" + COLUMN_COUNTRY_ID_FK + ") REFERENCES " + COUNTRIES_TABLE_NAME
+            + COLUMN_EMAIL + " TEXT, " + COLUMN_PHONE_NUMBER + " TEXT, " + COLUMN_GENDER + " TEXT, " + COLUMN_IMAGE + " TEXT, " + COLUMN_COUNTRY_ID_FK + " INTEGER, FOREIGN KEY (" + COLUMN_COUNTRY_ID_FK + ") REFERENCES " + COUNTRIES_TABLE_NAME
             + "(" + COLUMN_COUNTRY_ID + "))";
     private final static String CREATE_COUNTRIES = " CREATE TABLE " + COUNTRIES_TABLE_NAME + " ( " + COLUMN_COUNTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_COUNTRY_NAME + " TEXT, "
             + COLUMN_CALLING_CODE + " TEXT)";

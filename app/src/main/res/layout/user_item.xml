@@ -20,7 +20,7 @@
         android:paddingLeft     ="5dp"
         android:paddingRight    ="5dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id                  ="@+id/user_image"
             android:layout_width        ="0dp"
             android:layout_height       ="match_parent"

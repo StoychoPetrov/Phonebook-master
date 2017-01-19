@@ -29,6 +29,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     // Optional for XMPPTCPConnection
+    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile project(':smack-android-4.1.7')
     compile project(':smack-android-extensions-4.1.7')
     compile project(':smack-bosh-4.1.7')

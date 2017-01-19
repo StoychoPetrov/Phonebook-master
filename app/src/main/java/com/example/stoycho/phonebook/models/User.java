@@ -16,6 +16,7 @@ public class User implements Parcelable{
     private String  mEmail;
     private String  mPhoneNumber;
     private String  mGender;
+    private String  mImage;
 
     public User() {
     }
@@ -38,6 +39,7 @@ public class User implements Parcelable{
         mEmail         = in.readString();
         mPhoneNumber   = in.readString();
         mGender        = in.readString();
+        mImage         = in.readString();
     }
 
     public int getId() {
@@ -96,6 +98,14 @@ public class User implements Parcelable{
         mGender = male;
     }
 
+    public String getmImage() {
+        return mImage;
+    }
+
+    public void setmImage(String mImage) {
+        this.mImage = mImage;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -110,6 +120,7 @@ public class User implements Parcelable{
         parcel.writeString(mEmail);
         parcel.writeString(mPhoneNumber);
         parcel.writeString(mGender);
+        parcel.writeString(mImage);
     }
 
     public static final Parcelable.Creator CREATOR = new ClassLoaderCreator() {

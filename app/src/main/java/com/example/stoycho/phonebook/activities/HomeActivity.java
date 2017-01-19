@@ -2,10 +2,15 @@ package com.example.stoycho.phonebook.activities;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -13,11 +18,13 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -27,6 +34,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -53,9 +61,17 @@ import com.example.stoycho.phonebook.utils.Constants;
 import com.example.stoycho.phonebook.utils.GlobalData;
 import com.example.stoycho.phonebook.utils.Utils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 public class HomeActivity extends FragmentActivity implements View.OnClickListener,FragmentManager.OnBackStackChangedListener,OnRecyclerItemClick,RadioGroup.OnCheckedChangeListener,View.OnTouchListener,TextWatcher,ConnectXmppServer.onXmppConnectionListener,BaseComponentCommunication.onAnswerReceiveListener {
 
@@ -86,10 +102,11 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private boolean                     mNotCountrySearching;
     private CommandLogin                mCommandLogin;
     private CommandGetActiveCountries   mCommandGetActiveCountries;
+    private int                         mSelectedItemPosition;
 
-
+    private final static int    PICK_IMAGE                              = 1;
     private final static String ALL_COUNTRIES_ARE_SELECTED              = "all_selected";
-    private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 1;
+    private final        int    MY_PERMISSIONS_REQUEST_CALL_PHONE       = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +135,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         filterLayoutParams.bottomMargin     = getResources().getDisplayMetrics().heightPixels - mBar.getMeasuredHeight();
         filterLayoutParams.topMargin        = mBar.getMeasuredHeight() - getResources().getDisplayMetrics().heightPixels;
         mFilterLayout.setLayoutParams(filterLayoutParams);
+
     }
 
     private void setConnection()
@@ -148,7 +166,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         mResetButton            = (Button)                  findViewById(R.id.reset_button);
         mApplyButton            = (Button)                  findViewById(R.id.apply_button);
 
-        mRecyclerAdapter        = new UsersRecyclerAdapter(mUsers);
+        mRecyclerAdapter        = new UsersRecyclerAdapter(this,mUsers);
     }
 
     private void setListeners()
@@ -195,7 +213,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.CALL_PHONE)) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CALL_PHONE},
+                        new String[]{Manifest.permission.CALL_PHONE,Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_CALL_PHONE);
             }
         }
@@ -536,7 +554,54 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.user_item:
                 onEdit(position);
                 break;
+            case R.id.user_image:
+                selectImageForUser(position);
+                break;
         }
+    }
+
+    private void selectImageForUser(int position)
+    {
+        mSelectedItemPosition = position;
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK)
+        {
+            if (data != null)
+            {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+
+                if(cursor != null) {
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+                    Bitmap      bitmap          = BitmapFactory.decodeFile(picturePath);
+                    View        item            = mRecyclerView.getChildAt(mSelectedItemPosition);
+
+                    ImageView   image           = (ImageView) item.findViewById(R.id.user_image);
+                    image.setImageBitmap(bitmap);
+
+                    UsersDatabaseCommunication  usersDatabaseCommunication = UsersDatabaseCommunication.getInstance(this);
+                    usersDatabaseCommunication.updateImageInDatabase(mUsers.get(mSelectedItemPosition).getId(),picturePath);
+                }
+            }
+        }
+        mSelectedItemPosition = Constants.INVALID_ROW_INDEX;
     }
 
     private void callToNumber(String number)

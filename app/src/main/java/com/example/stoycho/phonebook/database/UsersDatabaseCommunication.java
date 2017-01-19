@@ -2,6 +2,7 @@ package com.example.stoycho.phonebook.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.stoycho.phonebook.models.User;
@@ -19,6 +20,7 @@ public class UsersDatabaseCommunication extends Database {
     private final static String COLUMN_EMAIL            = "email";
     private final static String COLUMN_PHONE_NUMBER     = "phone_number";
     private final static String COLUMN_GENDER           = "gender";
+    private final static String COLUMN_IMAGE            = "image";
     private final static String COLUMN_COUNTRY_ID_FK    = "coutry_id_fk";
 
     private final static String USERS_TABLE_NAME        = "users";
@@ -75,5 +77,16 @@ public class UsersDatabaseCommunication extends Database {
 
         database.close();
         return result;
+    }
+
+    public boolean updateImageInDatabase(int userId,String imagePath)
+    {
+        SQLiteDatabase database = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IMAGE, imagePath);
+        int result = database.update(USERS_TABLE_NAME,values,COLUMN_USER_ID + "=?",new String[]{String.valueOf(userId)});
+        database.close();
+
+        return result > 0;
     }
 }

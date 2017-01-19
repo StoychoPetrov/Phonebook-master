@@ -27,6 +27,7 @@ public class UsersAndCountruesDatabaseComunication extends Database {
     private final static String COLUMN_EMAIL            = "email";
     private final static String COLUMN_PHONE_NUMBER     = "phone_number";
     private final static String COLUMN_GENDER           = "gender";
+    private final static String COLUMN_IMAGE            = "image";
     private final static String COLUMN_COUNTRY_ID_FK    = "coutry_id_fk";
 
     /*********** Countries table columns*********/
@@ -90,6 +91,7 @@ public class UsersAndCountruesDatabaseComunication extends Database {
                 user.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)));
                 user.setGender(cursor.getString(cursor.getColumnIndex(COLUMN_GENDER)));
                 user.setPhoneNumber(cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_NUMBER)));
+                user.setmImage(cursor.getString(cursor.getColumnIndex(COLUMN_IMAGE)));
                 user.setCountry(cursor.getInt(cursor.getColumnIndex(COLUMN_COUNTRY_ID_FK)));
                 users.add(user);
 

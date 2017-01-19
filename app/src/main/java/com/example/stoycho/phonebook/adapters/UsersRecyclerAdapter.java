@@ -1,5 +1,8 @@
 package com.example.stoycho.phonebook.adapters;
 
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,7 @@ import java.util.List;
 
 public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdapter.ViewHolder> {
 
+    private Context             mContext;
     private List<User>          mUsers;
     private OnRecyclerItemClick mItemClickListener;
 
@@ -27,13 +31,16 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
 
         private TextView        mUserNameTxt;
         private ImageButton     mCallButton;
+        private ImageView       mUserImage;
 
         private ViewHolder(View itemView)  {
             super(itemView);
             mUserNameTxt            = (TextView)    itemView.findViewById(R.id.user_name);
             mCallButton             = (ImageButton) itemView.findViewById(R.id.call_button);
+            mUserImage              = (ImageView)   itemView.findViewById(R.id.user_image);
 
             itemView.setOnClickListener(this);
+            mUserImage.setOnClickListener(this);
             mCallButton.setOnClickListener(this);
         }
 
@@ -42,6 +49,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
            int id = view.getId();
             switch (id)
             {
+                case R.id.call_button:
+                case R.id.user_image:
                 case R.id.user_item:
                     callListener(view);
                     break;
@@ -55,7 +64,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         }
     }
 
-    public UsersRecyclerAdapter(List<User> users) {
+    public UsersRecyclerAdapter(Context context,List<User> users) {
+        mContext        = context;
         mUsers          = users;
     }
 
@@ -70,6 +80,10 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     public void onBindViewHolder(ViewHolder holder, int position) {
         User    user    = mUsers.get(position);
         holder.mUserNameTxt.setText(user.getFirstName());
+        if(user.getmImage() != null)
+            holder.mUserImage.setImageBitmap(BitmapFactory.decodeFile(user.getmImage()));
+        else
+            holder.mUserImage.setImageDrawable(ContextCompat.getDrawable(mContext,R.mipmap.ic_portrait_black_24dp));
     }
 
     @Override
