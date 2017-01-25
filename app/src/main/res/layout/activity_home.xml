@@ -6,7 +6,7 @@
     android:id              ="@+id/activity_home"
     android:layout_width    ="match_parent"
     android:layout_height   ="match_parent"
-    android:background      ="@android:color/white"
+    android:background      ="@android:color/transparent"
     tools:context           ="com.example.stoycho.phonebook.activities.HomeActivity">
 
     <!-- App bar -->
@@ -95,7 +95,7 @@
         android:layout_alignParentLeft          ="true"
         android:layout_alignParentStart         ="true"
         android:layout_below                    ="@+id/bar"
-        android:background                      ="@android:color/white">
+        android:background                      ="@android:color/transparent">
 
         <RelativeLayout
             android:id                          ="@+id/content_layout"

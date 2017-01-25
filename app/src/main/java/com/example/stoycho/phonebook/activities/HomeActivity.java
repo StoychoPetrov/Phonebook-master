@@ -1,6 +1,10 @@
 package com.example.stoycho.phonebook.activities;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -30,6 +35,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +46,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.stoycho.phonebook.Interfaces.OnRecyclerItemClick;
 import com.example.stoycho.phonebook.R;
@@ -135,7 +142,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         filterLayoutParams.bottomMargin     = getResources().getDisplayMetrics().heightPixels - mBar.getMeasuredHeight();
         filterLayoutParams.topMargin        = mBar.getMeasuredHeight() - getResources().getDisplayMetrics().heightPixels;
         mFilterLayout.setLayoutParams(filterLayoutParams);
-
     }
 
     private void setConnection()
@@ -251,7 +257,6 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mSearchCountryEdb, InputMethodManager.SHOW_IMPLICIT);
                 }
-
             }
 
             @Override

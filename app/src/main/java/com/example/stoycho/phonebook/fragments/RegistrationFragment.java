@@ -26,7 +26,7 @@ import com.example.stoycho.phonebook.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistrationFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
+public class RegistrationFragment extends BaseFragment implements View.OnClickListener, View.OnFocusChangeListener {
 
     private EditText    mFirstNameEdb;
     private EditText    mLastNameEdb;
@@ -34,6 +34,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     private EditText    mEmailEdb;
     private EditText    mPhoneNumberEdb;
     private TextView    mCallingCodeTxt;
+    private TextView    mFirstNameTxt;
+    private TextView    mLastNameTxt;
+    private TextView    mEmailTxt;
+    private TextView    mPhoneTxt;
     private RadioButton mMaleRadioBtn;
     private RadioButton mFemaleRadioBtn;
     private Button      mAddBtn;
@@ -69,6 +73,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mEmailEdb           = (EditText)    root.findViewById(R.id.email);
         mPhoneNumberEdb     = (EditText)    root.findViewById(R.id.phone_number);
         mCallingCodeTxt     = (TextView)    root.findViewById(R.id.callingCode);
+        mFirstNameTxt       = (TextView)    root.findViewById(R.id.first_name_txt);
+        mLastNameTxt        = (TextView)    root.findViewById(R.id.last_name_txt);
+        mEmailTxt           = (TextView)    root.findViewById(R.id.email_txt);
+        mPhoneTxt          = (TextView)    root.findViewById(R.id.phone_txt);
         mMaleRadioBtn       = (RadioButton) root.findViewById(R.id.male);
         mFemaleRadioBtn     = (RadioButton) root.findViewById(R.id.female);
         mAddBtn             = (Button)      root.findViewById(R.id.add);
@@ -82,6 +90,10 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
         mEmailEdb.setOnFocusChangeListener(this);
         mPhoneNumberEdb.setOnFocusChangeListener(this);
         mDelete.setOnClickListener(this);
+        mFirstNameEdb.setOnFocusChangeListener(this);
+        mLastNameEdb.setOnFocusChangeListener(this);
+        mEmailEdb.setOnFocusChangeListener(this);
+        mPhoneNumberEdb.setOnFocusChangeListener(this);
     }
 
     private void setInformations()
@@ -329,15 +341,38 @@ public class RegistrationFragment extends Fragment implements View.OnClickListen
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
         int id = view.getId();
-        switch (id)
-        {
+        switch (id) {
+            case R.id.first_name:
+                if (hasFocus) {
+                    setFocusOfEditText(mFirstNameEdb,mFirstNameTxt);
+                }
+                else
+                    removeFocus(mFirstNameEdb,mFirstNameTxt);
+                break;
+            case R.id.last_name:
+                if (hasFocus) {
+                    setFocusOfEditText(mLastNameEdb,mLastNameTxt);
+                }
+                else
+                    removeFocus(mLastNameEdb,mLastNameTxt);
+                break;
             case R.id.email:
-                if(!hasFocus)
+                if (!hasFocus) {
+                    removeFocus(mEmailEdb,mEmailTxt);
                     checkEmailValidation();
+                }
+                else
+                {
+                    setFocusOfEditText(mEmailEdb,mEmailTxt);
+                }
                 break;
             case R.id.phone_number:
-                if(!hasFocus)
+                if (!hasFocus) {
                     checkPhoneValidation();
+                    removeFocus(mPhoneNumberEdb,mPhoneTxt);
+                }
+                else
+                    setFocusOfEditText(mPhoneNumberEdb,mPhoneTxt);
                 break;
         }
     }
